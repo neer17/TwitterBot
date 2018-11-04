@@ -1,307 +1,248 @@
 [{
-    "created_at": "Fri Nov 02 01:09:34 +0000 2018",
-    "id": 1058164180270923800,
-    "id_str": "1058164180270923776",
-    "text": "Thanks guys https://t.co/9huURKm6Of",
-    "truncated": false,
+    "id": 828062956864864300,
+    "id_str": "828062956864864256",
+    "name": "Dank Memes",
+    "screen_name": "theMemesBotDank",
+    "location": "",
+    "description": "Bot programmed to post the hottest memes from r/dankmemes. Best memes daily 📲",
+    "url": "https://t.co/CgBg0RzOnE",
     "entities": {
-        "hashtags": [],
-        "symbols": [],
-        "user_mentions": [],
-        "urls": [],
-        "media": [{
-            "id": 1058164179138461700,
-            "id_str": "1058164179138461701",
-            "indices": [12, 35],
-            "media_url": "http://pbs.twimg.com/media/Dq9atuuXQAUNMAe.jpg",
-            "media_url_https": "https://pbs.twimg.com/media/Dq9atuuXQAUNMAe.jpg",
-            "url": "https://t.co/9huURKm6Of",
-            "display_url": "pic.twitter.com/9huURKm6Of",
-            "expanded_url": "https://twitter.com/theMemesBotDank/status/1058164180270923776/photo/1",
-            "type": "photo",
-            "sizes": {
-                "thumb": {
-                    "w": 150,
-                    "h": 150,
-                    "resize": "crop"
-                },
-                "medium": {
-                    "w": 640,
-                    "h": 448,
-                    "resize": "fit"
-                },
-                "small": {
-                    "w": 640,
-                    "h": 448,
-                    "resize": "fit"
-                },
-                "large": {
-                    "w": 640,
-                    "h": 448,
-                    "resize": "fit"
-                }
-            }
-        }]
-    },
-    "extended_entities": {
-        "media": [{
-            "id": 1058164179138461700,
-            "id_str": "1058164179138461701",
-            "indices": [12, 35],
-            "media_url": "http://pbs.twimg.com/media/Dq9atuuXQAUNMAe.jpg",
-            "media_url_https": "https://pbs.twimg.com/media/Dq9atuuXQAUNMAe.jpg",
-            "url": "https://t.co/9huURKm6Of",
-            "display_url": "pic.twitter.com/9huURKm6Of",
-            "expanded_url": "https://twitter.com/theMemesBotDank/status/1058164180270923776/photo/1",
-            "type": "photo",
-            "sizes": {
-                "thumb": {
-                    "w": 150,
-                    "h": 150,
-                    "resize": "crop"
-                },
-                "medium": {
-                    "w": 640,
-                    "h": 448,
-                    "resize": "fit"
-                },
-                "small": {
-                    "w": 640,
-                    "h": 448,
-                    "resize": "fit"
-                },
-                "large": {
-                    "w": 640,
-                    "h": 448,
-                    "resize": "fit"
-                }
-            }
-        }]
-    },
-    "source": "<a href=\"https://blanksdd.com\" rel=\"nofollow\">dank memes bot v2</a>",
-    "in_reply_to_status_id": null,
-    "in_reply_to_status_id_str": null,
-    "in_reply_to_user_id": null,
-    "in_reply_to_user_id_str": null,
-    "in_reply_to_screen_name": null,
-    "user": {
-        "id": 828062956864864300,
-        "id_str": "828062956864864256",
-        "name": "Dank Memes",
-        "screen_name": "theMemesBotDank",
-        "location": "",
-        "description": "Bot programmed to post the hottest memes from r/dankmemes. Best memes daily 📲",
-        "url": "https://t.co/CgBg0RzOnE",
-        "entities": {
-            "url": {
-                "urls": [{
-                    "url": "https://t.co/CgBg0RzOnE",
-                    "expanded_url": "https://discordapp.com/invite/byYCrXn",
-                    "display_url": "discordapp.com/invite/byYCrXn",
-                    "indices": [0, 23]
-                }]
-            },
-            "description": {
-                "urls": []
-            }
+        "url": {
+            "urls": [{
+                "url": "https://t.co/CgBg0RzOnE",
+                "expanded_url": "https://discordapp.com/invite/byYCrXn",
+                "display_url": "discordapp.com/invite/byYCrXn",
+                "indices": [0, 23]
+            }]
         },
-        "protected": false,
-        "followers_count": 20636,
-        "friends_count": 4,
-        "listed_count": 18,
-        "created_at": "Sun Feb 05 02:09:28 +0000 2017",
-        "favourites_count": 1,
-        "utc_offset": null,
-        "time_zone": null,
-        "geo_enabled": false,
-        "verified": false,
-        "statuses_count": 7687,
-        "lang": "en",
-        "contributors_enabled": false,
-        "is_translator": false,
-        "is_translation_enabled": false,
-        "profile_background_color": "F5F8FA",
-        "profile_background_image_url": null,
-        "profile_background_image_url_https": null,
-        "profile_background_tile": false,
-        "profile_image_url": "http://pbs.twimg.com/profile_images/970813384311656448/giE_ABXV_normal.jpg",
-        "profile_image_url_https": "https://pbs.twimg.com/profile_images/970813384311656448/giE_ABXV_normal.jpg",
-        "profile_banner_url": "https://pbs.twimg.com/profile_banners/828062956864864256/1519585366",
-        "profile_link_color": "1DA1F2",
-        "profile_sidebar_border_color": "C0DEED",
-        "profile_sidebar_fill_color": "DDEEF6",
-        "profile_text_color": "333333",
-        "profile_use_background_image": true,
-        "has_extended_profile": false,
-        "default_profile": true,
-        "default_profile_image": false,
-        "following": true,
-        "follow_request_sent": false,
-        "notifications": false,
-        "translator_type": "none"
+        "description": {
+            "urls": []
+        }
     },
-    "geo": null,
-    "coordinates": null,
-    "place": null,
-    "contributors": null,
-    "is_quote_status": false,
-    "retweet_count": 2,
-    "favorite_count": 40,
-    "favorited": false,
-    "retweeted": false,
-    "possibly_sensitive": false,
-    "lang": "en"
+    "protected": false,
+    "followers_count": 21034,
+    "friends_count": 4,
+    "listed_count": 18,
+    "created_at": "Sun Feb 05 02:09:28 +0000 2017",
+    "favourites_count": 1,
+    "utc_offset": null,
+    "time_zone": null,
+    "geo_enabled": false,
+    "verified": false,
+    "statuses_count": 7687,
+    "lang": "en",
+    "status": {
+        "created_at": "Fri Nov 02 01:09:34 +0000 2018",
+        "id": 1058164180270923800,
+        "id_str": "1058164180270923776",
+        "text": "Thanks guys https://t.co/9huURKm6Of",
+        "truncated": false,
+        "entities": {
+            "hashtags": [],
+            "symbols": [],
+            "user_mentions": [],
+            "urls": [],
+            "media": [{
+                "id": 1058164179138461700,
+                "id_str": "1058164179138461701",
+                "indices": [12, 35],
+                "media_url": "http://pbs.twimg.com/media/Dq9atuuXQAUNMAe.jpg",
+                "media_url_https": "https://pbs.twimg.com/media/Dq9atuuXQAUNMAe.jpg",
+                "url": "https://t.co/9huURKm6Of",
+                "display_url": "pic.twitter.com/9huURKm6Of",
+                "expanded_url": "https://twitter.com/theMemesBotDank/status/1058164180270923776/photo/1",
+                "type": "photo",
+                "sizes": {
+                    "thumb": {
+                        "w": 150,
+                        "h": 150,
+                        "resize": "crop"
+                    },
+                    "medium": {
+                        "w": 640,
+                        "h": 448,
+                        "resize": "fit"
+                    },
+                    "small": {
+                        "w": 640,
+                        "h": 448,
+                        "resize": "fit"
+                    },
+                    "large": {
+                        "w": 640,
+                        "h": 448,
+                        "resize": "fit"
+                    }
+                }
+            }]
+        },
+        "extended_entities": {
+            "media": [{
+                "id": 1058164179138461700,
+                "id_str": "1058164179138461701",
+                "indices": [12, 35],
+                "media_url": "http://pbs.twimg.com/media/Dq9atuuXQAUNMAe.jpg",
+                "media_url_https": "https://pbs.twimg.com/media/Dq9atuuXQAUNMAe.jpg",
+                "url": "https://t.co/9huURKm6Of",
+                "display_url": "pic.twitter.com/9huURKm6Of",
+                "expanded_url": "https://twitter.com/theMemesBotDank/status/1058164180270923776/photo/1",
+                "type": "photo",
+                "sizes": {
+                    "thumb": {
+                        "w": 150,
+                        "h": 150,
+                        "resize": "crop"
+                    },
+                    "medium": {
+                        "w": 640,
+                        "h": 448,
+                        "resize": "fit"
+                    },
+                    "small": {
+                        "w": 640,
+                        "h": 448,
+                        "resize": "fit"
+                    },
+                    "large": {
+                        "w": 640,
+                        "h": 448,
+                        "resize": "fit"
+                    }
+                }
+            }]
+        },
+        "source": "<a href=\"https://blanksdd.com\" rel=\"nofollow\">dank memes bot v2</a>",
+        "in_reply_to_status_id": null,
+        "in_reply_to_status_id_str": null,
+        "in_reply_to_user_id": null,
+        "in_reply_to_user_id_str": null,
+        "in_reply_to_screen_name": null,
+        "geo": null,
+        "coordinates": null,
+        "place": null,
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 4,
+        "favorite_count": 48,
+        "favorited": false,
+        "retweeted": false,
+        "possibly_sensitive": false,
+        "lang": "en"
+    },
+    "contributors_enabled": false,
+    "is_translator": false,
+    "is_translation_enabled": false,
+    "profile_background_color": "F5F8FA",
+    "profile_background_image_url": null,
+    "profile_background_image_url_https": null,
+    "profile_background_tile": false,
+    "profile_image_url": "http://pbs.twimg.com/profile_images/970813384311656448/giE_ABXV_normal.jpg",
+    "profile_image_url_https": "https://pbs.twimg.com/profile_images/970813384311656448/giE_ABXV_normal.jpg",
+    "profile_banner_url": "https://pbs.twimg.com/profile_banners/828062956864864256/1519585366",
+    "profile_link_color": "1DA1F2",
+    "profile_sidebar_border_color": "C0DEED",
+    "profile_sidebar_fill_color": "DDEEF6",
+    "profile_text_color": "333333",
+    "profile_use_background_image": true,
+    "has_extended_profile": false,
+    "default_profile": true,
+    "default_profile_image": false,
+    "following": false,
+    "follow_request_sent": false,
+    "notifications": false,
+    "translator_type": "none"
 }, {
-    "created_at": "Fri Nov 02 01:09:34 +0000 2018",
-    "id": 1058164177703968800,
-    "id_str": "1058164177703968768",
-    "text": "don't fail brothers https://t.co/LUcNfxTouK",
-    "truncated": false,
+    "id": 1420411640,
+    "id_str": "1420411640",
+    "name": "Neeraj Sewani",
+    "screen_name": "neeraj_sewani",
+    "location": "Jaipur,India",
+    "description": "Be a king? Think not.Why be a king when u can be God.",
+    "url": null,
     "entities": {
-        "hashtags": [],
-        "symbols": [],
-        "user_mentions": [],
-        "urls": [],
-        "media": [{
-            "id": 1058164171689336800,
-            "id_str": "1058164171689336837",
-            "indices": [20, 43],
-            "media_url": "http://pbs.twimg.com/media/Dq9atS-WoAUGX7_.jpg",
-            "media_url_https": "https://pbs.twimg.com/media/Dq9atS-WoAUGX7_.jpg",
-            "url": "https://t.co/LUcNfxTouK",
-            "display_url": "pic.twitter.com/LUcNfxTouK",
-            "expanded_url": "https://twitter.com/theMemesBotDank/status/1058164177703968768/photo/1",
-            "type": "photo",
-            "sizes": {
-                "large": {
-                    "w": 720,
-                    "h": 960,
-                    "resize": "fit"
-                },
-                "thumb": {
-                    "w": 150,
-                    "h": 150,
-                    "resize": "crop"
-                },
-                "medium": {
-                    "w": 720,
-                    "h": 960,
-                    "resize": "fit"
-                },
-                "small": {
-                    "w": 510,
-                    "h": 680,
-                    "resize": "fit"
-                }
-            }
-        }]
+        "description": {
+            "urls": []
+        }
     },
-    "extended_entities": {
-        "media": [{
-            "id": 1058164171689336800,
-            "id_str": "1058164171689336837",
-            "indices": [20, 43],
-            "media_url": "http://pbs.twimg.com/media/Dq9atS-WoAUGX7_.jpg",
-            "media_url_https": "https://pbs.twimg.com/media/Dq9atS-WoAUGX7_.jpg",
-            "url": "https://t.co/LUcNfxTouK",
-            "display_url": "pic.twitter.com/LUcNfxTouK",
-            "expanded_url": "https://twitter.com/theMemesBotDank/status/1058164177703968768/photo/1",
-            "type": "photo",
-            "sizes": {
-                "large": {
-                    "w": 720,
-                    "h": 960,
-                    "resize": "fit"
-                },
-                "thumb": {
-                    "w": 150,
-                    "h": 150,
-                    "resize": "crop"
-                },
-                "medium": {
-                    "w": 720,
-                    "h": 960,
-                    "resize": "fit"
-                },
-                "small": {
-                    "w": 510,
-                    "h": 680,
-                    "resize": "fit"
-                }
-            }
-        }]
-    },
-    "source": "<a href=\"https://blanksdd.com\" rel=\"nofollow\">dank memes bot v2</a>",
-    "in_reply_to_status_id": null,
-    "in_reply_to_status_id_str": null,
-    "in_reply_to_user_id": null,
-    "in_reply_to_user_id_str": null,
-    "in_reply_to_screen_name": null,
-    "user": {
-        "id": 828062956864864300,
-        "id_str": "828062956864864256",
-        "name": "Dank Memes",
-        "screen_name": "theMemesBotDank",
-        "location": "",
-        "description": "Bot programmed to post the hottest memes from r/dankmemes. Best memes daily 📲",
-        "url": "https://t.co/CgBg0RzOnE",
+    "protected": false,
+    "followers_count": 91,
+    "friends_count": 8,
+    "listed_count": 1,
+    "created_at": "Sat May 11 11:20:48 +0000 2013",
+    "favourites_count": 228,
+    "utc_offset": null,
+    "time_zone": null,
+    "geo_enabled": false,
+    "verified": false,
+    "statuses_count": 211,
+    "lang": "en",
+    "status": {
+        "created_at": "Sun Oct 14 11:05:05 +0000 2018",
+        "id": 1051428676233920500,
+        "id_str": "1051428676233920515",
+        "text": "@bugscripter @ProcessingOrg Hi @bugscripter, sorry for the tweet but I can't send you a direct message unless you are following me.",
+        "truncated": false,
         "entities": {
-            "url": {
-                "urls": [{
-                    "url": "https://t.co/CgBg0RzOnE",
-                    "expanded_url": "https://discordapp.com/invite/byYCrXn",
-                    "display_url": "discordapp.com/invite/byYCrXn",
-                    "indices": [0, 23]
-                }]
-            },
-            "description": {
-                "urls": []
-            }
+            "hashtags": [],
+            "symbols": [],
+            "user_mentions": [{
+                "screen_name": "bugscripter",
+                "name": "Syam Sundar K",
+                "id": 1866169603,
+                "id_str": "1866169603",
+                "indices": [0, 12]
+            }, {
+                "screen_name": "ProcessingOrg",
+                "name": "Processing",
+                "id": 876624356,
+                "id_str": "876624356",
+                "indices": [13, 27]
+            }, {
+                "screen_name": "bugscripter",
+                "name": "Syam Sundar K",
+                "id": 1866169603,
+                "id_str": "1866169603",
+                "indices": [31, 43]
+            }],
+            "urls": []
         },
-        "protected": false,
-        "followers_count": 20636,
-        "friends_count": 4,
-        "listed_count": 18,
-        "created_at": "Sun Feb 05 02:09:28 +0000 2017",
-        "favourites_count": 1,
-        "utc_offset": null,
-        "time_zone": null,
-        "geo_enabled": false,
-        "verified": false,
-        "statuses_count": 7687,
-        "lang": "en",
-        "contributors_enabled": false,
-        "is_translator": false,
-        "is_translation_enabled": false,
-        "profile_background_color": "F5F8FA",
-        "profile_background_image_url": null,
-        "profile_background_image_url_https": null,
-        "profile_background_tile": false,
-        "profile_image_url": "http://pbs.twimg.com/profile_images/970813384311656448/giE_ABXV_normal.jpg",
-        "profile_image_url_https": "https://pbs.twimg.com/profile_images/970813384311656448/giE_ABXV_normal.jpg",
-        "profile_banner_url": "https://pbs.twimg.com/profile_banners/828062956864864256/1519585366",
-        "profile_link_color": "1DA1F2",
-        "profile_sidebar_border_color": "C0DEED",
-        "profile_sidebar_fill_color": "DDEEF6",
-        "profile_text_color": "333333",
-        "profile_use_background_image": true,
-        "has_extended_profile": false,
-        "default_profile": true,
-        "default_profile_image": false,
-        "following": true,
-        "follow_request_sent": false,
-        "notifications": false,
-        "translator_type": "none"
+        "source": "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter Web Client</a>",
+        "in_reply_to_status_id": 1051405405824245800,
+        "in_reply_to_status_id_str": "1051405405824245761",
+        "in_reply_to_user_id": 1866169603,
+        "in_reply_to_user_id_str": "1866169603",
+        "in_reply_to_screen_name": "bugscripter",
+        "geo": null,
+        "coordinates": null,
+        "place": null,
+        "contributors": null,
+        "is_quote_status": false,
+        "retweet_count": 0,
+        "favorite_count": 0,
+        "favorited": false,
+        "retweeted": false,
+        "lang": "en"
     },
-    "geo": null,
-    "coordinates": null,
-    "place": null,
-    "contributors": null,
-    "is_quote_status": false,
-    "retweet_count": 12,
-    "favorite_count": 64,
-    "favorited": false,
-    "retweeted": false,
-    "possibly_sensitive": false,
-    "lang": "en"
+    "contributors_enabled": false,
+    "is_translator": false,
+    "is_translation_enabled": false,
+    "profile_background_color": "C0DEED",
+    "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+    "profile_background_tile": false,
+    "profile_image_url": "http://pbs.twimg.com/profile_images/882675881000411136/Z0qTkAc6_normal.jpg",
+    "profile_image_url_https": "https://pbs.twimg.com/profile_images/882675881000411136/Z0qTkAc6_normal.jpg",
+    "profile_banner_url": "https://pbs.twimg.com/profile_banners/1420411640/1432486606",
+    "profile_link_color": "1DA1F2",
+    "profile_sidebar_border_color": "C0DEED",
+    "profile_sidebar_fill_color": "DDEEF6",
+    "profile_text_color": "333333",
+    "profile_use_background_image": true,
+    "has_extended_profile": false,
+    "default_profile": true,
+    "default_profile_image": false,
+    "following": false,
+    "follow_request_sent": false,
+    "notifications": false,
+    "translator_type": "none"
 }]
