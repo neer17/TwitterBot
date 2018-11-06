@@ -52,14 +52,21 @@ async function download(url, type) {
     });
 }
 
-//
-async function followPeople(id){
-    var response = await client
-        .post("friendships/create", {
-            user_id: id
-        })
+//  following people based on their id
+async function followPeople(id) {
+    try {
+        var response = await client
+            .post("friendships/create", {
+                user_id: id
+            })
 
-        return response
+        console.log('==> ', response.screen_name, '<== is followed');
+
+    } catch (err) {
+        console.log('==> ', response.screen_name, '<== is already being followed');
+
+    }
+
 }
 
 //  getting the ids by screen_name
@@ -79,12 +86,15 @@ client
         var arrayOfIds = [];
 
         for (let i = 0; i < response.length; i++) {
-            arrayOfIds.push(response[i].id_str + ",");
+            arrayOfIds.push(response[i].id_str);
             friendsString += response[i].id_str + ",";
 
             //  following the users
-            var response = followPeople(arrayOfIds[i])
+            followPeople(arrayOfIds[i])
+
         }
+        
+
 
         //  attaching a stream to read all the tweets of the users
         //  present in "friendsString"
@@ -193,7 +203,7 @@ client
                                         console.log(err);
                                     });
                             }
-                        }else{
+                        } else {
                             console.log('Tweet without media');
                         }
                     } else {
@@ -204,6 +214,9 @@ client
                 stream.on("error", function (error) {
                     console.log(error);
                 });
+
+                console.log('TEMP log in stream');
+
             }
         );
     })
