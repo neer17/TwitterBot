@@ -91,6 +91,7 @@ client.get('users/lookup', params).then((response) => {
     }, function (stream) {
 
         stream.on('data', function (event) {
+            //  writing data received from the stream
             fs.writeFile('./dataFromStream.json', JSON.stringify(event), 'utf8');
             console.log('stream data saved');
 
@@ -114,89 +115,25 @@ client.get('users/lookup', params).then((response) => {
                     var photoUrl = mediaObject.media_url;
 
                     //  downloading the photo
-                    download(photoUrl, PHOTO).then(() => {
+                    var base64EncodedImage = fs.readFileSync(path.join(__dirname, 'memes', 'meme0.jpg'), {
+                        encoding: 'base64'
+                    })
+
+                    client.post('media/upload', {
+                        media_data: base64EncodedImage
+                    }).then((response) => {
+                        var mediaId = response.media_id_string;
+
                         //
-                        var stats = fs.statSync('./memes/meme0.jpg');
-                        var sizeInBytes = stats["size"];
-                        var sizeInMBs = sizeInBytes / 1000000.0;
-
-                        console.log('size of photos in MBs ==> ', sizeInMBs);
-
-                        //  uploading media
-
-                        //  step-1 INIT
-                        client.post('media/upload', {
-                            command: 'INIT',
-                            total_bytes: sizeInBytes,
-                            media_type: 'photo/jpg',
-
+                        client.post('statuses/update', {
+                            status: 'live from the bot',
+                            media_ids: mediaId
                         }).then((response) => {
-                            var mediaId = response.media_id_string;
-
-                            //  reading the file that is to be uploaded
-                            var pathOfFileToRead = path.join(__dirname, 'memes', 'meme0.jpg');
-
-                            var binaryEncodedPhoto, base64EncodedPhoto;
-
-                            /* binaryEncodedPhoto = fs.readFileSync(pathOfFileToRead, {
-                                encoding: 'binary'
-                            }); */
-                            base64EncodedPhoto = fs.readFileSync(pathOfFileToRead, {
-                                encoding: 'base64'
-                            });
-
-                            console.log(base64EncodedPhoto);
-                            
-
-                            //  step-2 APPEND
-                            client.post('media/upload', {
-                                command: 'APPEND',
-                                media_id: mediaId,
-                                media_data: base64EncodedPhoto,
-                                segment_index: 0
-                            }).then((response) => {
-
-                                console.log(response);
-                                console.log('mediaId ==> ', mediaId);
-                                console.log('type of media id', typeof mediaId);
-
-
-
-                                //  step-3 STATUS
-                                client.get('media/upload', {
-                                    command: 'STATUS',
-                                    media_id: mediaId
-                                }).then((response) => {
-                                    console.log(response);
-                                }).catch((err) => {
-                                    console.log('step-3');
-                                    console.log(err);
-                                })
-
-                                //  step-4 FINALIZE
-                                /* client.post('media/upload', {
-                            command: 'FINALIZE',
-                            media_id: mediaId
-                            }).then((response) => {
-                            console.log(response)
-                            }).catch((err) => {
-                            console.log('step-4');
-                            console.log(err);
-                            });
- */
-                            }).catch((err) => {
-                                console.log('step-2');
-                                console.log(err);
-                            })
-
-                        }).catch((err) => {
-                            console.log('step-1')
-                            console.log(err);
+                           if(response)
+                           console.log('Tweeted successfully');
                         })
-                    }).catch((err) => {
-                        console.log('error in downloading image');
-                        console.log(err);
-                    });
+                    })
+
                 }
             } else {
                 console.log('RETWEET')
