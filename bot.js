@@ -1,25 +1,21 @@
-var Twitter = require('twitter');
-var fs = require('fs');
-var axios = require('axios');
-var path = require('path');
-var sharp = require('sharp');
+var Twitter = require("twitter");
+var fs = require("fs");
+var axios = require("axios");
+var path = require("path");
+var sharp = require("sharp");
 
-var keys = require('./config');
+var keys = require("./config");
 
 var client = new Twitter(keys);
 
 const GIF = "animated_gif";
 const PHOTO = "photo";
 
-console.log('bot started');
+console.log("bot started");
 
 
-
-
-//  declaring a global variable to count no of memes
-global.memeCount = 0;
-
-//
+//  declaring it to store comma seperated ids of all the users 
+//  whom are being followed
 var friendsString = '';
 
 /**
@@ -28,133 +24,192 @@ var friendsString = '';
 
 async function download(url, type) {
     var response = await axios({
-        method: 'get',
+        method: "get",
         url,
-        responseType: 'stream'
+        responseType: "stream"
     });
 
     var imagePath;
 
     //  determining the type of media
     if (type === GIF) {
-        imagePath = path.join(__dirname, 'memes', `meme${memeCount++}.mp4`);
+        imagePath = path.join(__dirname, "memes", `meme0.mp4`);
     } else if (type === PHOTO) {
-        imagePath = path.join(__dirname, 'memes', `meme${memeCount++}.jpg`);
+        imagePath = path.join(__dirname, "memes", `meme0.jpg`);
     }
 
     //  writing the media into the file
     response.data.pipe(fs.createWriteStream(imagePath));
 
     return new Promise((resolve, reject) => {
-        response.data.on('end', () => {
+        response.data.on("end", () => {
             resolve();
         });
 
-        response.data.on('error', (err) => {
+        response.data.on("error", err => {
             reject(err);
         });
     });
+}
+
+//
+async function followPeople(id){
+    var response = await client
+        .post("friendships/create", {
+            user_id: id
+        })
+
+        return response
 }
 
 //  getting the ids by screen_name
 //  then following the users
 
 var params = {
-    // screen_name: 'thememesbotdank,neeraj_sewani,got_memes_,throneofmemes,knowyourmeme,thememebot,thehoodmemes,wholesomememe,animememedaily,memesonhistory,brainmemes,gameplay'
-    screen_name: 'neeraj_sewani'
-}
-client.get('users/lookup', params).then((response) => {
-    /* console.log(response);
-    fs.writeFileSync('./output.json', JSON.stringify(response), 'utf8');
-    console.log('file saved'); */
+    screen_name: "thememesbotdank,neeraj_sewani,got_memes_,throneofmemes,knowyourmeme,thememebot,thehoodmemes,wholesomememe,animememedaily,memesonhistory,brainmemes,gameplay"
+    // screen_name: 'neeraj_sewani'
+};
+client
+    .get("users/lookup", params)
+    .then(response => {
 
-    var arrayOfIds = [];
+        //  creating a comma seperated list ids of the people to follow
+        //  and storing it in "friendsString"
+        //  and then following them
+        var arrayOfIds = [];
 
-    for (let i = 0; i < response.length; i++) {
-        arrayOfIds.push(response[i].id_str + ',');
-        friendsString += response[i].id_str + ',';
+        for (let i = 0; i < response.length; i++) {
+            arrayOfIds.push(response[i].id_str + ",");
+            friendsString += response[i].id_str + ",";
 
-        //  following the users
-        client.post('friendships/create', {
-            user_id: arrayOfIds[i]
-        }).then((response) => {
-            console.log('==> ', response.screen_name, ' <== is followed');
-        }).catch((err) => {
-            if (err)
-                console.log('already following ==> ', response[i].screen_name, '<==');
-        })
-    }
+            //  following the users
+            var response = followPeople(arrayOfIds[i])
+        }
 
-    //  attaching a stream to read all the tweets of the users present in "friendsString"
-    client.stream('statuses/filter', {
-        follow: friendsString
-    }, function (stream) {
+        //  attaching a stream to read all the tweets of the users
+        //  present in "friendsString"
+        client.stream(
+            "statuses/filter", {
+                follow: friendsString
+            },
+            function (stream) {
+                stream.on("data", function (event) {
 
-        stream.on('data', function (event) {
-            //  writing data received from the stream
-            fs.writeFile('./dataFromStream.json', JSON.stringify(event), 'utf8');
-            console.log('stream data saved');
+                    //  on a TWEET
+                    if (!event.retweeted_status) {
+                        console.log("TWEET");
 
-            //  on a TWEET
-            if (!event.retweeted_status) {
-                console.log('TWEET');
+                        //  writing data received from the stream
+                        fs.writeFile(
+                            "./dataFromStream.json",
+                            JSON.stringify(event),
+                            "utf8"
+                        );
+                        console.log("stream data saved");
 
-                //  no of media objects depends on the no of images
-                //  here considering only one image is tweeted
-                var mediaObject = event.extended_entities.media[0];
+                        //  no of media objects depends on the no of images
+                        //  here considering only one image is tweeted
+                        var mediaObject = event.extended_entities.media[0];
 
-                //  determining the type of media
-                if (mediaObject.type === GIF) {
-                    //  it would be video
-                    var gifUrl = mediaObject.video_info.variants[0].url;
+                        //  if the tweet has media then only progressing forward
+                        if (mediaObject) {
 
-                    //  downloading the gif
-                    download(gifUrl, GIF);
+                            //  getting the status of the tweet
+                            var completeStatusWithMediaLink = mediaObject.text;
+                            var res = completeStatusWithMediaLink.split('https');
+                            var status = res[0];
 
-                } else if (mediaObject.type === PHOTO) {
-                    var photoUrl = mediaObject.media_url;
+                            //  determining the type of media
+                            if (mediaObject.type === GIF) {
+                                //  it would be video
+                                var gifUrl = mediaObject.video_info.variants[0].url;
 
-                    //  downloading the photo
-                    var base64EncodedImage = fs.readFileSync(path.join(__dirname, 'memes', 'meme0.jpg'), {
-                        encoding: 'base64'
-                    })
+                                //  downloading the gif
+                                download(gifUrl, GIF)
+                                    .then(() => {
+                                        var base64EncodedImage = fs.readFileSync(
+                                            path.join(__dirname, "memes", "meme0.mp4"), {
+                                                encoding: "base64"
+                                            }
+                                        );
 
-                    client.post('media/upload', {
-                        media_data: base64EncodedImage
-                    }).then((response) => {
-                        var mediaId = response.media_id_string;
+                                        //  uploading the media and then tweeting it using "media_id"
+                                        client
+                                            .post("media/upload", {
+                                                media_data: base64EncodedImage
+                                            })
+                                            .then(response => {
+                                                var mediaId = response.media_id_string;
 
-                        //
-                        client.post('statuses/update', {
-                            status: 'live from the bot',
-                            media_ids: mediaId
-                        }).then((response) => {
-                           if(response)
-                           console.log('Tweeted successfully');
-                        })
-                    })
+                                                //  tweeting the media
+                                                client
+                                                    .post("statuses/update", {
+                                                        status,
+                                                        media_ids: mediaId
+                                                    })
+                                                    .then(response => {
+                                                        if (response) console.log("Tweeted successfully");
+                                                    });
+                                            });
+                                    })
+                                    .catch(err => {
+                                        console.log("Error in download method for media = GIF ");
+                                        console.log(err);
+                                    });
+                            } else if (mediaObject.type === PHOTO) {
+                                var photoUrl = mediaObject.media_url;
 
-                }
-            } else {
-                console.log('RETWEET')
+                                //  downloading the photo
+                                download(photoUrl, PHOTO)
+                                    .then(() => {
+                                        //
+                                        var base64EncodedImage = fs.readFileSync(
+                                            path.join(__dirname, "memes", "meme0.jpg"), {
+                                                encoding: "base64"
+                                            }
+                                        );
+
+                                        //  uploading the media and then tweeting it using "media_id"
+                                        client
+                                            .post("media/upload", {
+                                                media_data: base64EncodedImage
+                                            })
+                                            .then(response => {
+                                                var mediaId = response.media_id_string;
+
+                                                //  tweeting the media
+                                                client
+                                                    .post("statuses/update", {
+                                                        status,
+                                                        media_ids: mediaId
+                                                    })
+                                                    .then(response => {
+                                                        if (response) console.log("Tweeted successfully");
+                                                    });
+                                            });
+                                    })
+                                    .catch(err => {
+                                        console.log("Error in download method in media = PHOTO");
+                                        console.log(err);
+                                    });
+                            }
+                        }else{
+                            console.log('Tweet without media');
+                        }
+                    } else {
+                        console.log("RETWEET");
+                    }
+                });
+
+                stream.on("error", function (error) {
+                    console.log(error);
+                });
             }
-        });
-
-        stream.on('error', function (error) {
-            console.log(error);
-
-        });
+        );
+    })
+    .catch(err => {
+        console.log(err);
     });
-
-    console.log(friendsString);
-
-}).catch((err) => {
-    console.log(err);
-});
-
-
-
-
 
 /**
  * START getting the user id
