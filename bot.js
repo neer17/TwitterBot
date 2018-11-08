@@ -8,6 +8,7 @@ var keys = require("./config");
 
 var client = new Twitter(keys);
 
+global.memeCount = 0;
 const GIF = "animated_gif";
 const PHOTO = "photo";
 
@@ -73,7 +74,7 @@ async function followPeople(id) {
 //  then following the users
 
 var params = {
-    screen_name: "thememesbotdank,neeraj_sewani,got_memes_,throneofmemes,knowyourmeme,thememebot,thehoodmemes,wholesomememe,animememedaily,memesonhistory,brainmemes,gameplay"
+    screen_name: "thememesbotdank,neeraj_sewani,footballmemesco,got_memes_,throneofmemes,knowyourmeme,thememebot,thehoodmemes,animememedaily,memesonhistory,brainmemes,gameplay"
     // screen_name: 'neeraj_sewani'
 };
 client
@@ -93,7 +94,7 @@ client
             followPeople(arrayOfIds[i])
 
         }
-        
+
 
 
         //  attaching a stream to read all the tweets of the users
@@ -105,74 +106,138 @@ client
             function (stream) {
                 stream.on("data", function (event) {
 
-                    //  on a TWEET
-                    if (!event.retweeted_status) {
-                        console.log("TWEET");
+                    //  writing what is obtained from the stream
+                    fs.writeFileSync(path.join(__dirname, 'dataFromStream.json'),
+                        JSON.stringify(event))
 
-                        //  writing data received from the stream
-                        fs.writeFile(
-                            "./dataFromStream.json",
-                            JSON.stringify(event),
-                            "utf8"
-                        );
-                        console.log("stream data saved");
+                    //  if the media is present
+                    if (event.extended_entities) {
 
-                        //  no of media objects depends on the no of images
-                        //  here considering only one image is tweeted
-                        var mediaObject = event.extended_entities.media[0];
+                        //  on a TWEET
+                        if (!event.retweeted_status) {
+                            var whoTweeted = event.user.screen_name;
+                            console.log(whoTweeted, " ==> TWEETED");
 
-                        //  if the tweet has media then only progressing forward
-                        if (mediaObject) {
+                            //  no of media objects depends on the no of images
+                            //  here considering only one image is tweeted
+                            var mediaObject = event.extended_entities.media[0];
+
+                            //  if the tweet has media then only progressing forward
+                            if (mediaObject != null) {
+
+                                //  getting the status of the tweet
+                                //  as with a media "text" contains both the caption
+                                //  and the link of the media
+                                var completeStatusWithMediaLink = event.text;
+                                var res = completeStatusWithMediaLink.split('https');
+                                var status = res[0];
+
+                                //  determining the type of media
+                                if (mediaObject.type === GIF) {
+                                    //  it would be video
+                                    var gifUrl = mediaObject.video_info.variants[0].url;
+
+                                    //  downloading the gif
+                                    download(gifUrl, GIF)
+                                        .then(() => {
+                                            var base64EncodedImage = fs.readFileSync(
+                                                path.join(__dirname, "memes", "meme0.mp4"), {
+                                                    encoding: "base64"
+                                                }
+                                            );
+
+                                            //  uploading the media and then tweeting it using "media_id"
+                                            client
+                                                .post("media/upload", {
+                                                    media_data: base64EncodedImage
+                                                })
+                                                .then(response => {
+                                                    var mediaId = response.media_id_string;
+
+                                                    //  tweeting the media
+                                                    client
+                                                        .post("statuses/update", {
+                                                            status,
+                                                            media_ids: mediaId
+                                                        })
+                                                        .then(response => {
+                                                            if (response) console.log("Tweeted successfully");
+                                                        });
+                                                });
+                                        })
+                                        .catch(err => {
+                                            console.log("Error in download method for media = GIF ");
+                                            console.log(err);
+                                        });
+                                } else if (mediaObject.type === PHOTO) {
+                                    var photoUrl = mediaObject.media_url;
+
+                                    //  downloading the photo
+                                    download(photoUrl, PHOTO)
+                                        .then(() => {
+
+                                            var base64EncodedImage = fs.readFileSync(
+                                                path.join(__dirname, "memes", "meme0.jpg"), {
+                                                    encoding: "base64"
+                                                }
+                                            );
+
+                                            //  uploading the media and then tweeting it using "media_id"
+                                            client
+                                                .post("media/upload", {
+                                                    media_data: base64EncodedImage
+                                                })
+                                                .then(response => {
+                                                    var mediaId = response.media_id_string;
+
+                                                    //  tweeting the media
+                                                    client
+                                                        .post("statuses/update", {
+                                                            status,
+                                                            media_ids: mediaId
+                                                        })
+                                                        .then(response => {
+                                                            if (response) console.log("Tweeted successfully");
+                                                        }).catch((err) => {
+                                                            console.log('Error in tweeting');
+                                                            console.log(err);
+                                                        })
+                                                }).catch((err) => {
+                                                    console.log(err);
+
+                                                })
+                                        })
+                                        .catch(err => {
+                                            console.log("Error in download method in media = PHOTO");
+                                            console.log(err);
+                                        });
+                                }
+                            } else {
+                                console.log('Tweet without media');
+                            }
+
+                            //  on RETWEET
+                        } else {
+                            var whoTweeted = event.retweeted_status.user.screen_name;
+                            var mediaObject = event.extended_entities.media[0];
+                            var memeUrl = mediaObject.media_url;
 
                             //  getting the status of the tweet
-                            var completeStatusWithMediaLink = mediaObject.text;
+                            //  as with a media "text" contains both the caption
+                            //  and the link of the media
+                            var completeStatusWithMediaLink = event.text;
                             var res = completeStatusWithMediaLink.split('https');
                             var status = res[0];
 
-                            //  determining the type of media
-                            if (mediaObject.type === GIF) {
-                                //  it would be video
-                                var gifUrl = mediaObject.video_info.variants[0].url;
 
-                                //  downloading the gif
-                                download(gifUrl, GIF)
-                                    .then(() => {
-                                        var base64EncodedImage = fs.readFileSync(
-                                            path.join(__dirname, "memes", "meme0.mp4"), {
-                                                encoding: "base64"
-                                            }
-                                        );
+                            if (mediaObject.type === PHOTO) {
 
-                                        //  uploading the media and then tweeting it using "media_id"
-                                        client
-                                            .post("media/upload", {
-                                                media_data: base64EncodedImage
-                                            })
-                                            .then(response => {
-                                                var mediaId = response.media_id_string;
-
-                                                //  tweeting the media
-                                                client
-                                                    .post("statuses/update", {
-                                                        status,
-                                                        media_ids: mediaId
-                                                    })
-                                                    .then(response => {
-                                                        if (response) console.log("Tweeted successfully");
-                                                    });
-                                            });
-                                    })
-                                    .catch(err => {
-                                        console.log("Error in download method for media = GIF ");
-                                        console.log(err);
-                                    });
-                            } else if (mediaObject.type === PHOTO) {
-                                var photoUrl = mediaObject.media_url;
+                            console.log(whoTweeted, " ==> RETWEETED PHOTO");
 
                                 //  downloading the photo
-                                download(photoUrl, PHOTO)
+                                download(memeUrl, PHOTO)
                                     .then(() => {
-                                        //
+
                                         var base64EncodedImage = fs.readFileSync(
                                             path.join(__dirname, "memes", "meme0.jpg"), {
                                                 encoding: "base64"
@@ -194,21 +259,36 @@ client
                                                         media_ids: mediaId
                                                     })
                                                     .then(response => {
-                                                        if (response) console.log("Tweeted successfully");
-                                                    });
-                                            });
+                                                        if (response) console.log("Inside RETWEET ==> Tweeted successfully");
+                                                    }).catch((err) => {
+                                                        console.log('Error in tweeting');
+                                                        console.log(err);
+                                                    })
+                                            }).catch((err) => {
+                                                console.log(err);
+
+                                            })
                                     })
                                     .catch(err => {
                                         console.log("Error in download method in media = PHOTO");
                                         console.log(err);
                                     });
+
+                            }else if(mediaObject.type === GIF){
+                            console.log(whoTweeted, " ==> RETWEETED GIF");
+                                
+                                
                             }
-                        } else {
-                            console.log('Tweet without media');
+
                         }
                     } else {
-                        console.log("RETWEET");
+                        var isARetweet = event.retweeted_status
+                        var username = isARetweet ? event.retweeted_status.user.screen_name :
+                            event.user.screen_name;
+
+                        console.log(username, ' ==> TWEETED with no media');
                     }
+
                 });
 
                 stream.on("error", function (error) {
