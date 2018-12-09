@@ -24,12 +24,18 @@ var arrayOfIds = []
 var newLatestTweetId = 1
 var splittedStatus
 var status
+var usersTweets
+var i = 0
+var totalFollowing
+var params1
+var recentTweetIds = []
+var firstTime = true
 
 /**
  * downloading the memes
  */
 
-async function download (url, type) {
+async function download(url, type) {
   var response = await axios({
     method: 'get',
     url,
@@ -60,7 +66,7 @@ async function download (url, type) {
 }
 
 //  following people based on their id
-async function followPeople (id) {
+async function followPeople(id) {
   try {
     var response = await client.post('friendships/create', {
       user_id: id
@@ -76,8 +82,7 @@ async function followPeople (id) {
 //  then following the users
 
 var params = {
-  screen_name: 'memesonhistory,footballmemesco' /* 'thememesbotdank,neeraj_sewani,footballmemesco,got_memes_,throneofmemes,knowyourmeme,thememebot,thehoodmemes,animememedaily,memesonhistory,brainmemes,gameplay' */
-  // screen_name: 'neeraj_sewani'
+  screen_name: 'animememedaily'/* ,memesonhistory,got_memes_,throneofmemes,dankmemesgang,thememesbotdank,throneofmemes,knowyourmeme,thehoodmemes,animememedaily,memesonhistory,brainmemes,gameplay' */
 }
 
 client
@@ -96,106 +101,225 @@ client
       followPeople(arrayOfIds[i])
     }
 
-    /**
-     * END of users/lookup
-     */
+    totalFollowing = arrayOfIds.length
 
-    //  for the first time not including the 'since_id'
-    //  after getting the 'newLatestTweetId' from the first tweet
-    //  updating the 'params'
-    params = {
-      user_id: arrayOfIds[1],
-      count: 1,
-      exclude_replies: true,
-      include_rts: true
-    }
+    console.log('total folowing ==> ', totalFollowing)
+    console.log(arrayOfIds)
 
-    //  getting the tweets after every x seconds
-    setInterval(() => {
-      //  following would return tweets in chronological order
-      client.get('statuses/user_timeline', params).then((tweets) => {
-        fs.writeFileSync(path.join(__dirname, 'tweets.json'), JSON.stringify(tweets))
-        console.log('written into the file')
+    //  calling 'primary1()' when 'getLatestTweetId()' gets resolved
+    getLatestTweetId().then(() => {
+      primary1()
+    })
+  }).catch((err) => {
+    console.log(err)
+  })
 
-        //  getting the tweet id
-        //  in case 'newLatestTweetId' is the latest then it would get redirected to the
-        //  catch block
-        newLatestTweetId = tweets[0].id_str
+/**
+ * END of users/lookup
+ */
 
-        //  adding 'since_id' to params
-        params = {
-          user_id: arrayOfIds[1],
+//  gretting an 'recentTweetIds' array of latest tweet ids of all the followed users
+function getLatestTweetId () {
+  //  for the first time not including the 'since_id'
+  //  after getting the 'newLatestTweetId' from the first tweet
+  //  updating the 'params'
+  params1 = {
+    user_id: arrayOfIds[i],
+    count: 1,
+    exclude_replies: true,
+    include_rts: false
+  }
+
+  setTimeout(() => {
+    client.get('statuses/user_timeline', params1).then((response) => {
+      recentTweetIds.push(response.id_str)
+
+      //  when all the ids in 'arrayOfIds' are traversed then returning a promise
+      if (i === totalFollowing) {
+        i = 0
+        return new Promise((resolve, reject) => {
+          resolve()
+        })
+      } else {
+        i++
+        params1 = {
+          user_id: arrayOfIds[i],
           count: 1,
           exclude_replies: true,
-          include_rts: true,
-          since_id: newLatestTweetId
+          include_rts: false
         }
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }, 1000)
+}
 
-        //  checking if tweets have media
-        var hasMedia = tweets[0].entities.media[0]
-        if (hasMedia) {
-          var mediaType = hasMedia.type
+/**
+ * END of getLatestTweetId
+ */
 
-          //  determining the type of media
-          if (mediaType === 'photo') {
-            console.log('media type ==> PHOTO')
 
-            var mediaUrl = hasMedia.media_url
 
-            download(mediaUrl, PHOTO).then(() => {
-              console.log('media downloaded successfully')
+function primary1() {
+  //  getting the tweets after every x seconds
+  setInterval(() => {
+    if (firstTime) {
+      
+    } else {
 
-              //  encoding the downloaded image
-              var base64EncodedImage = fs.readFileSync(
-                path.join(__dirname, 'memes', 'meme0.jpg'), {
-                  encoding: 'base64'
-                }
-              )
+    }
+    console.log('setInterval started')
+    console.log(`setInterval starting \t value of i ==> ${i}`)
+    console.log(params1)
 
-              //  uploading the media and then tweeting it using 'media_id'
-              client
-                .post('media/upload', {
-                  media_data: base64EncodedImage
-                })
-                .then(response => {
-                  var mediaId = response.media_id_string
+    params1 = {
+      user_id: arrayOfIds[i],
+      count: 1,
+      exclude_replies: true,
+      include_rts: false,
+      since_id: recentTweetIds[i]
+    }
 
-                  fs.writeFileSync(path.join(__dirname, 'uploadedMediaData.json'), JSON.stringify(response))
+    //  following would return tweets in chronological order
+    client.get('statuses/user_timeline', params1).then((tweets) => {
+      console.log('step 1 \t getting tweets of a user')
 
-                  console.log('written into uploadedMediaData')
+      //  storing the value of tweets for step 3
+      usersTweets = tweets
 
-                  //  getting the status and removing the url part of it
-                  splittedStatus = tweets[0].text.split('https')
-                  status = splittedStatus[0]
+      fs.writeFileSync(path.join(__dirname, 'tweets.json'), JSON.stringify(tweets))
+      console.log('written into the file')
 
-                  //  tweeting the media
-                  client
-                    .post('statuses/update', {
-                      status,
-                      media_ids: mediaId
-                    })
-                    .then(response => {
-                      if (response) console.log('Tweeted successfully')
-                    }).catch((err) => {
-                      console.log(err)
-                    })
-                })
-            }).catch((err) => {
-              console.log(err)
-            })
-          }
+      /**
+       * ERROR prone
+       */
+      //  getting the tweet id
+      //  in case 'newLatestTweetId' is the latest then it would get redirected to the
+      //  catch block
+      newLatestTweetId = tweets[0].id_str
+
+      // if tweets exist then pushing the id(latest) of the tweet to 'recentTweetsIds' array
+      //  else storing the 'newLatestTweetId' which would be the previous tweet's id
+      if (tweets) {
+        recentTweetIds.push(tweets[0].id_str)
+      } else {
+        recentTweetIds.push(newLatestTweetId)
+      }
+
+      /**
+       * ERROR prone
+       */
+      //  adding 'since_id' to params
+      if (arrayOfIds[i]) {
+        params1 = {
+          user_id: arrayOfIds[i],
+          count: 1,
+          exclude_replies: true,
+          include_rts: false,
+          since_id: recentTweetIds[i]
         }
-      }).catch((err) => {
-        if (err.message === 'Cannot read property \'id_str\' of undefined') {
+      } else {
+        throw new Error('user_id is undefined')
+      }
+
+      //  if value of i exceeds the value of total followings then
+      //  re-initializing i to 0 else increasing value of i by 1
+      if (i === totalFollowing + 1) {
+        i = 0
+      } else {
+        i++
+      }
+
+      console.log('updated params1 \n', params1)
+
+      //  checking if tweets have media
+      var hasMedia = tweets[0].entities.media[0]
+      if (hasMedia) {
+        var mediaType = hasMedia.type
+
+        //  determining the type of media
+        if (mediaType === 'photo') {
+          console.log('media type ==> PHOTO')
+
+          var mediaUrl = hasMedia.media_url
+
+          //  returning a promise returned by download method
+          //  for promise chaining
+          return download(mediaUrl, PHOTO)
+        }
+      }
+    }).then((response) => {
+      console.log('step 2')
+      console.log('media downloaded successfully')
+
+      //  encoding the downloaded image
+      var base64EncodedImage = fs.readFileSync(
+        path.join(__dirname, 'memes', 'meme0.jpg'), {
+          encoding: 'base64'
+        }
+      )
+
+      //  uploading the media and then tweeting it using 'media_id'
+      //  returning the promise
+      return client
+        .post('media/upload', {
+          media_data: base64EncodedImage
+        })
+    }).then((response) => {
+      console.log('step 3 \t uploading media')
+
+      var mediaId = response.media_id_string
+
+      fs.writeFileSync(path.join(__dirname, 'uploadedMediaData.json'), JSON.stringify(response))
+
+      console.log('written into uploadedMediaData')
+
+      //  getting the status and removing the url part of it
+      splittedStatus = usersTweets[0].text.split('https')
+      status = splittedStatus[0]
+
+      //  tweeting the media
+      //  returning a promise
+      return client
+        .post('statuses/update', {
+          status,
+          media_ids: mediaId
+        })
+    }).then((response) => {
+      console.log('step 4 \t tweeting')
+      if (response) {
+        console.log('Tweeted successfully')
+      }
+    }).catch((err) => {
+      if (err/* .message === 'Cannot read property \'id_str\' of undefined' */) {
+        console.log(err)
+        //  if value of i exceeds the value of total followings then
+        //  re-initializing i to 0 else increasing value of i by 1
+        if (i === totalFollowing + 1) {
+          i = 0
         } else {
-          console.log(err.message)
+          i++
         }
-      })
-    }, 10000)
 
-    //  attaching a stream to read all the tweets of the users
-    //  present in 'friendsString'
-    /* client.stream(
+        params1 = {
+          user_id: arrayOfIds[i],
+          count: 1,
+          exclude_replies: true,
+          include_rts: false
+        }
+      }
+
+      console.log(`catch statement \t value of i ==> ${i}`)
+    })
+
+    console.log('setInterval ended')
+  }, 1000 * 20)
+}
+
+//  attaching a stream to read all the tweets of the users
+//  present in 'friendsString'
+/* client.stream(
      'statuses/filter', {
        follow: friendsString
      },
@@ -415,10 +539,10 @@ client
      }
    )
    */
-  })
+/* })
   .catch(err => {
     console.log(err)
-  })
+  }) */
 
 /**
  * START getting the user id
