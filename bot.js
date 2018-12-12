@@ -32,6 +32,7 @@ var usersTweets
 var i = 0
 var j = 0
 var l = 0
+var m = 0
 var totalFollowing
 var params1
 var recentTweetIds = []
@@ -93,7 +94,6 @@ async function followPeople(id) {
     return new Promise((resolve, reject) => {
       reject(err)
     })
-
   }
 }
 
@@ -104,13 +104,13 @@ async function followPeople(id) {
   screen_name: 'memesonhistory,got_memes_,throneofmemes,dankmemesgang,thememesbotdank,throneofmemes,knowyourmeme,thehoodmemes,animememedaily,brainmemes,gameplay,footballmemesco'
 } */
 
-var params = {
-  screen_name: 'memesonhistory,got_memes_,throneofmemes,dankmemesgang,footballmemesco'
-}
-
 /* var params = {
-  screen_name: 'gameplay,historytolearn,itsharrypotter'
+  screen_name: 'memesonhistory,got_memes_,throneofmemes,dankmemesgang,footballmemesco'
 } */
+
+var params = {
+  screen_name: 'gameplay,historytolearn,itsharrypotter'
+}
 
 client
   .get('users/lookup', params)
@@ -120,35 +120,29 @@ client
     //  and then following them
     arrayOfIds = []
 
-    var setIntervalHandler = setInterval(function func2 () {
+    for (let i = 0; i < response.length; i++) {
       arrayOfIds.push(response[i].id_str)
+      friendsString += response[i].id_str + ','
+
       //  following the users
-      followPeople(arrayOfIds[i]).then(() => {
-        if (i === params.length - 1) {
-          clearInterval(setIntervalHandler)
-        }
-        i++
-        setInterval(func2, 1000 * 2)
-      }).catch((err) => {
-        console.log(err)
-      })
-    }, 1000 * 2)
+      followPeople(arrayOfIds[i])
+    }
 
     totalFollowing = arrayOfIds.length
 
     console.log('total following ==> ', totalFollowing)
-    // console.log(arrayOfIds)
+    console.log(arrayOfIds)
 
     //  calling '' when 'getLatestTweetId()' gets resolved
     getLatestTweetId().then(() => {
       setTimeout(function func1() {
         checkForNewerTweet().then(() => {
-          setTimeout(func1, 1000 * 5)
+          setTimeout(func1, 1000 * 10)
         }).catch((err) => {
           console.log(err)
-          setTimeout(func1, 1000 * 5)
+          setTimeout(func1, 1000 * 10)
         })
-      }, 1000 * 5)
+      }, 1000 * 10)
     }).catch((err) => {
       console.log(err)
     })
@@ -178,8 +172,6 @@ function getLatestTweetId() {
       // console.log('inside setInterval')
 
       return client.get('statuses/user_timeline', params1).then((response) => {
-        console.log(recentTweetIds)
-
         /* fs.writeFileSync(path.join(__dirname, 'response.json'), JSON.stringify(response))
         console.log('written into the file') */
 
@@ -189,6 +181,7 @@ function getLatestTweetId() {
         //  when all the ids in 'arrayOfIds' are traversed then returning a promise
         if (l === arrayOfIds.length - 1) {
           l = 0
+          console.log(recentTweetIds)
           clearInterval(setIntervalHandler)
           resolve()
         } else {
@@ -234,8 +227,9 @@ function checkForNewerTweet() {
       firstTime = false
 
       console.log('inside else')
+      console.log('since_id ==> ', recentTweetIds[m])
 
-      if (i < recentTweetIds.length) {
+      if (m < recentTweetIds.length) {
         paramWithSinceId = {
           user_id: arrayOfIds[i],
           count: 1,
@@ -243,14 +237,14 @@ function checkForNewerTweet() {
           include_rts: false,
           since_id: recentTweetIds[i]
         }
-        i++
+        m++
         return primary1(paramWithSinceId).then(() => {
           resolve()
         }).catch((err) => {
           return reject(err)
         })
       } else {
-        i = 0
+        m = 0
         resolve()
       }
     }
