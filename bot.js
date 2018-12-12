@@ -117,6 +117,7 @@ client
 
     //  calling '' when 'getLatestTweetId()' gets resolved
     getLatestTweetId().then(() => {
+      console.log('inside then')
       console.log(recentTweetIds)
     }).catch((err) => {
       console.log(err)
@@ -142,50 +143,24 @@ function getLatestTweetId() {
     include_rts: false
   }
 
-  /* return new Promise((resolve, reject) => {
-    (function func1() {
-      console.log('inside setTimeout')
-      client.get('statuses/user_timeline', params1).then((response) => {
-        fs.writeFileSync(path.join(__dirname, 'response.json'), JSON.stringify(response))
-        console.log('written into the file')
-        //  storing the 'id_str' of the recent tweet of followings
-        recentTweetIds.push(response[0].id_str)
-
-        l++
-
-        //  when all the ids in 'arrayOfIds' are traversed then returning a promise
-        if (l === totalFollowing) {
-          console.log('inside if')
-          l = 0
-          return resolve()
-        } else {
-          params1 = {
-            user_id: arrayOfIds[l],
-            count: 1,
-            exclude_replies: true,
-            include_rts: false
-          }
-          setTimeout(func1, 1000)
-        }
-      })
-    })()
-  }) */
-
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      console.log('inside setTimeout')
+    var setIntervalHandler = setInterval(() => {
+      // console.log('inside setInterval')
 
       client.get('statuses/user_timeline', params1).then((response) => {
-        fs.writeFileSync(path.join(__dirname, 'response.json'), JSON.stringify(response))
-        console.log('written into the file')
+        console.log(recentTweetIds)
+        
+        /* fs.writeFileSync(path.join(__dirname, 'response.json'), JSON.stringify(response))
+        console.log('written into the file') */
+
         //  storing the 'id_str' of the recent tweet of followings
         recentTweetIds.push(response[0].id_str)
         l++
 
         //  when all the ids in 'arrayOfIds' are traversed then returning a promise
         if (l === totalFollowing) {
-          console.log('inside if')
           l = 0
+          clearInterval(setIntervalHandler)
           return resolve()
         } else {
           params1 = {
@@ -196,7 +171,7 @@ function getLatestTweetId() {
           }
         }
       })
-    }, 1000)
+    }, 1000 * 2)
   })
 }
 
