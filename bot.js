@@ -150,16 +150,16 @@ client
     getLatestTweetId().then(() => {
       setTimeout(function func1() {
         checkForNewerTweet().then(() => {
-          setTimeout(func1, 1000 * 20)
+          setTimeout(func1, 1000 * 10)
         }).catch((err) => {
           if (err.message === 'Cannot read property \'id_str\' of undefined') {
             console.log('Old Tweet')
           } else {
             console.log(err)
           }
-          setTimeout(func1, 1000 * 20)
+          setTimeout(func1, 1000 * 10)
         })
-      }, 1000 * 20)
+      }, 1000 * 10)
     }).catch((err) => {
       console.log(err)
     })
