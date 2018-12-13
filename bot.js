@@ -16,6 +16,7 @@ const setTimeoutPromise = util.promisify(setTimeout)
 global.memeCount = 0
 const GIF = 'animated_gif'
 const PHOTO = 'photo'
+const VIDEO = 'video'
 
 console.log('bot started')
 
@@ -43,6 +44,7 @@ var paramWithSinceId
 var outsideOfSetTimeout = false
 var end
 var start
+var mediaType
 
 /**
  * downloading the memes
@@ -58,7 +60,7 @@ async function download(url, type) {
   var imagePath
 
   //  determining the type of media
-  if (type === GIF) {
+  if (type === GIF || type === VIDEO) {
     imagePath = path.join(__dirname, 'memes', `meme0.mp4`)
   } else if (type === PHOTO) {
     imagePath = path.join(__dirname, 'memes', `meme0.jpg`)
@@ -103,9 +105,9 @@ async function followPeople(id) {
 //  getting the ids by screen_name
 //  then following the users
 
-/* var params = {
+var params = {
   screen_name: 'memesonhistory,got_memes_,dankmemesgang,thememesbotdank,throneofmemes,knowyourmeme,thehoodmemes,animememedaily,brainmemes,gameplay,footballmemesco'
-} */
+}
 
 /* var params = {
   screen_name: 'memesonhistory,got_memes_,throneofmemes,dankmemesgang,footballmemesco'
@@ -115,9 +117,13 @@ async function followPeople(id) {
   screen_name: 'gameplay,historytolearn,itsharrypotter'
 } */
 
-var params = {
-  screen_name: 'thememesbotdank,knowyourmeme,thehoodmemes'/* ,animememedaily,brainmemes' */
-}
+/* var params = {
+  screen_name: 'thememesbotdank,knowyourmeme,thehoodmemes',animememedaily,brainmemes'
+} */
+
+/* var params = {
+  screen_name: 'ffs_omg'
+} */
 
 client
   .get('users/lookup', params)
@@ -144,12 +150,16 @@ client
     getLatestTweetId().then(() => {
       setTimeout(function func1() {
         checkForNewerTweet().then(() => {
-          setTimeout(func1, 1000 * 10)
+          setTimeout(func1, 1000 * 20)
         }).catch((err) => {
-          console.log(err)
-          setTimeout(func1, 1000 * 10)
+          if (err.message === 'Cannot read property \'id_str\' of undefined') {
+            console.log('Old Tweet')
+          } else {
+            console.log(err)
+          }
+          setTimeout(func1, 1000 * 20)
         })
-      }, 1000 * 10)
+      }, 1000 * 20)
     }).catch((err) => {
       console.log(err)
     })
@@ -279,8 +289,8 @@ function primary1(params1, index) {
       //  storing the value of tweets for step 3
       usersTweets = tweets
 
-      /* fs.writeFileSync(path.join(__dirname, 'tweets.json'), JSON.stringify(tweets))
-      console.log('written into the file') */
+      fs.writeFileSync(path.join(__dirname, 'tweets.json'), JSON.stringify(tweets))
+      console.log('written into the file')
 
       /**
        * ERROR prone
@@ -296,18 +306,18 @@ function primary1(params1, index) {
       recentTweetIds.splice(index, 1, newLatestTweetId)
       console.log('index ==> ', index, '\n')
       console.log('primary1 ==> recentTweetIds ==> ', recentTweetIds)
-      fs.appendFileSync(path.join(__dirname, 'since_ids_after_splice.json'), JSON.stringify(recentTweetIds))
-
+      /* fs.appendFileSync(path.join(__dirname, 'since_ids_after_splice.json'), JSON.stringify(recentTweetIds))
+ */
       //  checking if tweets have media
       /**
        * ERROR in case of no media
        */
-      var hasMedia = tweets[0].entities.media[0]
+      var hasMedia = tweets[0].extended_entities.media[0]
       if (hasMedia) {
-        var mediaType = hasMedia.type
+        mediaType = hasMedia.type
 
         //  determining the type of media
-        if (mediaType === 'photo') {
+        if (mediaType === PHOTO) {
           console.log('media type ==> PHOTO')
 
           var mediaUrl = hasMedia.media_url
@@ -315,24 +325,49 @@ function primary1(params1, index) {
           //  returning a promise returned by download method
           //  for promise chaining
           return download(mediaUrl, PHOTO)
+        } else if (mediaType === GIF) {
+          //  it would be video
+          var gifUrl = hasMedia.video_info.variants[1].url
+
+          //  returning a promise
+          return download(gifUrl, GIF)
+        } else {
+          var videoUrl = hasMedia.video_info.variants[1].url
+
+          //  returning a promise
+          return download(videoUrl, VIDEO)
         }
       }
     }).then((response) => {
       console.log('step 2')
       console.log('media downloaded successfully')
 
-      //  encoding the downloaded image
-      var base64EncodedImage = fs.readFileSync(
-        path.join(__dirname, 'memes', 'meme0.jpg'), {
-          encoding: 'base64'
-        }
-      )
+      var base64EncodedMedia
 
+      if (mediaType === GIF) {
+        base64EncodedMedia = fs.readFileSync(
+          path.join(__dirname, 'memes', 'meme0.mp4'), {
+            encoding: 'base64'
+          }
+        )
+      } else if (mediaType === PHOTO) {
+        base64EncodedMedia = fs.readFileSync(
+          path.join(__dirname, 'memes', 'meme0.jpg'), {
+            encoding: 'base64'
+          }
+        )
+      } else {
+        base64EncodedMedia = fs.readFileSync(
+          path.join(__dirname, 'memes', 'meme0.mp4'), {
+            encoding: 'base64'
+          }
+        )
+      }
       //  uploading the media and then tweeting it using 'media_id'
       //  returning the promise
       return client
         .post('media/upload', {
-          media_data: base64EncodedImage
+          media_data: base64EncodedMedia
         })
     }).then((response) => {
       console.log('step 3 \t uploading media')
