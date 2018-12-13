@@ -3,6 +3,7 @@ var fs = require('fs')
 var axios = require('axios')
 var path = require('path')
 var util = require('util')
+const { performance } = require('perf_hooks')
 // var sharp = require('sharp')
 
 var keys = require('./config')
@@ -40,6 +41,8 @@ var firstTime = true
 var paramWithoutSinceId
 var paramWithSinceId
 var outsideOfSetTimeout = false
+var end
+var start
 
 /**
  * downloading the memes
@@ -101,15 +104,19 @@ async function followPeople(id) {
 //  then following the users
 
 /* var params = {
-  screen_name: 'memesonhistory,got_memes_,throneofmemes,dankmemesgang,thememesbotdank,throneofmemes,knowyourmeme,thehoodmemes,animememedaily,brainmemes,gameplay,footballmemesco'
+  screen_name: 'memesonhistory,got_memes_,dankmemesgang,thememesbotdank,throneofmemes,knowyourmeme,thehoodmemes,animememedaily,brainmemes,gameplay,footballmemesco'
 } */
 
 /* var params = {
   screen_name: 'memesonhistory,got_memes_,throneofmemes,dankmemesgang,footballmemesco'
 } */
 
-var params = {
+/* var params = {
   screen_name: 'gameplay,historytolearn,itsharrypotter'
+} */
+
+var params = {
+  screen_name: 'thememesbotdank,knowyourmeme,thehoodmemes'/* ,animememedaily,brainmemes' */
 }
 
 client
@@ -133,7 +140,7 @@ client
     console.log('total following ==> ', totalFollowing)
     console.log(arrayOfIds)
 
-    //  calling '' when 'getLatestTweetId()' gets resolved
+    //  calling 'checkForNewerTweet' when 'getLatestTweetId()' gets resolved
     getLatestTweetId().then(() => {
       setTimeout(function func1() {
         checkForNewerTweet().then(() => {
@@ -170,7 +177,6 @@ function getLatestTweetId() {
   return new Promise((resolve, reject) => {
     var setIntervalHandler = setInterval(() => {
       // console.log('inside setInterval')
-
       return client.get('statuses/user_timeline', params1).then((response) => {
         /* fs.writeFileSync(path.join(__dirname, 'response.json'), JSON.stringify(response))
         console.log('written into the file') */
@@ -193,6 +199,12 @@ function getLatestTweetId() {
             include_rts: false
           }
         }
+      }).catch((err) => {
+        if (++l === arrayOfIds.length - 1) {
+          l = 0
+          clearInterval(setIntervalHandler)
+        }
+        reject(err)
       })
     }, 1000 * 2)
   })
@@ -216,10 +228,11 @@ function checkForNewerTweet() {
         exclude_replies: true,
         include_rts: false
       }
-      j++
-      return primary1(paramWithoutSinceId).then(() => {
+      return primary1(paramWithoutSinceId, j).then(() => {
+        j++
         resolve()
       }).catch((err) => {
+        j++
         reject(err)
       })
     } else {
@@ -231,21 +244,23 @@ function checkForNewerTweet() {
 
       if (m < recentTweetIds.length) {
         paramWithSinceId = {
-          user_id: arrayOfIds[i],
+          user_id: arrayOfIds[m],
           count: 1,
           exclude_replies: true,
           include_rts: false,
-          since_id: recentTweetIds[i]
+          since_id: recentTweetIds[m]
         }
-        m++
-        return primary1(paramWithSinceId).then(() => {
+        return primary1(paramWithSinceId, m).then(() => {
+          if (++m === recentTweetIds.length) {
+            m = 0
+          }
           resolve()
         }).catch((err) => {
-          return reject(err)
+          if (++m === recentTweetIds.length) {
+            m = 0
+          }
+          reject(err)
         })
-      } else {
-        m = 0
-        resolve()
       }
     }
   })
@@ -255,8 +270,7 @@ function checkForNewerTweet() {
  * END checkForNewerTweet
  */
 
-function primary1(params1) {
-
+function primary1(params1, index) {
   return new Promise((resolve, reject) => {
     //  following would return tweets in chronological order
     client.get('statuses/user_timeline', params1).then((tweets) => {
@@ -275,10 +289,14 @@ function primary1(params1) {
       //  in case 'newLatestTweetId' is the latest then it would get redirected to the
       //  catch block
       newLatestTweetId = tweets[0].id_str
+      fs.appendFileSync(path.join(__dirname, 'since_ids.json'), JSON.stringify(newLatestTweetId))
 
       //  if there is any new tweet then updating the tweet id
       //  of old tweet with the new tweet id
-      recentTweetIds.splice(i, 0, newLatestTweetId)
+      recentTweetIds.splice(index, 1, newLatestTweetId)
+      console.log('index ==> ', index, '\n')
+      console.log('primary1 ==> recentTweetIds ==> ', recentTweetIds)
+      fs.appendFileSync(path.join(__dirname, 'since_ids_after_splice.json'), JSON.stringify(recentTweetIds))
 
       //  checking if tweets have media
       /**
