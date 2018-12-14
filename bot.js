@@ -2,16 +2,15 @@ var Twitter = require('twitter')
 var fs = require('fs')
 var axios = require('axios')
 var path = require('path')
-var util = require('util')
-const { performance } = require('perf_hooks')
+// var util = require('util')
 // var sharp = require('sharp')
 
 var keys = require('./config')
 
 var client = new Twitter(keys)
 
-//  promisifying 'setTimeout'
-const setTimeoutPromise = util.promisify(setTimeout)
+/* //  promisifying 'setTimeout'
+const setTimeoutPromise = util.promisify(setTimeout) */
 
 global.memeCount = 0
 const GIF = 'animated_gif'
@@ -25,7 +24,7 @@ console.log('bot started')
 var friendsString = ''
 
 //
-var mediaIds = []
+// var mediaIds = []
 var arrayOfIds = []
 var newLatestTweetId = 1
 var splittedStatus
@@ -41,9 +40,6 @@ var recentTweetIds = []
 var firstTime = true
 var paramWithoutSinceId
 var paramWithSinceId
-var outsideOfSetTimeout = false
-var end
-var start
 var mediaType
 
 /**
@@ -154,6 +150,8 @@ client
         }).catch((err) => {
           if (err.message === 'Cannot read property \'id_str\' of undefined') {
             console.log('Old Tweet')
+          } else if (err.message === 'Cannot read property \'media\' of undefined') {
+            console.log('Tweet with no media')
           } else {
             console.log(err)
           }
