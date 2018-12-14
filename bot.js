@@ -287,8 +287,8 @@ function primary1(params1, index) {
       //  storing the value of tweets for step 3
       usersTweets = tweets
 
-      fs.writeFileSync(path.join(__dirname, 'tweets.json'), JSON.stringify(tweets))
-      console.log('written into the file')
+      /* fs.writeFileSync(path.join(__dirname, 'tweets.json'), JSON.stringify(tweets))
+      console.log('written into the file') */
 
       /**
        * ERROR prone
@@ -297,7 +297,7 @@ function primary1(params1, index) {
       //  in case 'newLatestTweetId' is the latest then it would get redirected to the
       //  catch block
       newLatestTweetId = tweets[0].id_str
-      fs.appendFileSync(path.join(__dirname, 'since_ids.json'), JSON.stringify(newLatestTweetId))
+      /* fs.appendFileSync(path.join(__dirname, 'since_ids.json'), JSON.stringify(newLatestTweetId)) */
 
       //  if there is any new tweet then updating the tweet id
       //  of old tweet with the new tweet id
@@ -372,7 +372,7 @@ function primary1(params1, index) {
 
       var mediaId = response.media_id_string
 
-      fs.writeFileSync(path.join(__dirname, 'uploadedMediaData.json'), JSON.stringify(response))
+      /* fs.writeFileSync(path.join(__dirname, 'uploadedMediaData.json'), JSON.stringify(response)) */
 
       console.log('written into uploadedMediaData')
 
