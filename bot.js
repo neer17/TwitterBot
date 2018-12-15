@@ -103,13 +103,13 @@ async function followPeople(id) {
 //  getting the ids by screen_name
 //  then following the users
 
-/* var params = {
-  screen_name: 'memesonhistory,got_memes_,dankmemesgang,thememesbotdank,throneofmemes,knowyourmeme,thehoodmemes,animememedaily,brainmemes,gameplay,footballmemesco'
-} */
-
 var params = {
-  screen_name: 'memesonhistory,got_memes_,throneofmemes,dankmemesgang,footballmemesco'
+  screen_name: 'memesonhistory,got_memes_,dankmemesgang,thememesbotdank,throneofmemes,knowyourmeme,thehoodmemes,animememedaily,brainmemes,gameplay,footballmemesco'
 }
+
+/* var params = {
+  screen_name: 'memesonhistory,got_memes_,throneofmemes,dankmemesgang,footballmemesco'
+} */
 
 /* var params = {
   screen_name: 'gameplay,historytolearn,itsharrypotter'
