@@ -103,8 +103,10 @@ async function followPeople(id) {
 //  getting the ids by screen_name
 //  then following the users
 
+// video_params = {"itsnotgonewell"}
+
 var params = {
-  screen_name: 'memesonhistory,got_memes_,dankmemesgang,thememesbotdank,throneofmemes,knowyourmeme,thehoodmemes,animememedaily,brainmemes,gameplay,footballmemesco'
+  screen_name: 'memesonhistory,got_memes_,dankmemesgang,thememesbotdank,throneofmemes,knowyourmeme,thehoodmemes,animememedaily,brainmemes,gameplay,footballmemesco,soccermemes,trollfootball'
 }
 
 /* var params = {
