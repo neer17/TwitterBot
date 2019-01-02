@@ -2,12 +2,16 @@ var Twitter = require('twitter')
 var fs = require('fs')
 var axios = require('axios')
 var path = require('path')
+var mongoose = require('mongoose')
 var http = require('http')
 
 // var util = require('util')
 // var sharp = require('sharp')
 
+mongoose.connect(`mongodb://neer17:pontiac633725@ds231374.mlab.com:31374/twitter_bot_2018`)
+
 var keys = require('./config')
+var TweetIdsModel = require('./Schema/TweetIdSchema')
 
 var client = new Twitter(keys)
 
@@ -147,24 +151,25 @@ client
     console.log(arrayOfIds)
 
     //  calling 'checkForNewerTweet' when 'getLatestTweetId()' gets resolved
-    getLatestTweetId().then(() => {
-      setTimeout(function func1() {
-        checkForNewerTweet().then(() => {
-          setTimeout(func1, 1000 * 10)
+    getLatestTweetId()
+    /* .then(() => {
+          setTimeout(function func1() {
+            checkForNewerTweet().then(() => {
+              setTimeout(func1, 1000 * 10)
+            }).catch((err) => {
+              if (err.message === 'Cannot read property \'id_str\' of undefined') {
+                console.log('Old Tweet')
+              } else if (err.message === 'Cannot read property \'media\' of undefined') {
+                console.log('Tweet with no media')
+              } else {
+                console.log(err)
+              }
+              setTimeout(func1, 1000 * 10)
+            })
+          }, 1000 * 10)
         }).catch((err) => {
-          if (err.message === 'Cannot read property \'id_str\' of undefined') {
-            console.log('Old Tweet')
-          } else if (err.message === 'Cannot read property \'media\' of undefined') {
-            console.log('Tweet with no media')
-          } else {
-            console.log(err)
-          }
-          setTimeout(func1, 1000 * 10)
-        })
-      }, 1000 * 10)
-    }).catch((err) => {
-      console.log(err)
-    })
+          console.log(err)
+        }) */
   }).catch((err) => {
     console.log(err)
   })
@@ -200,8 +205,26 @@ function getLatestTweetId() {
         if (l === arrayOfIds.length - 1) {
           l = 0
           console.log(recentTweetIds)
-          clearInterval(setIntervalHandler)
-          resolve()
+
+          //  finding existing tweet ids, deleting them and saving the latest ones
+          TweetIdsModel.find({}).then((foundObject) => {
+            console.log(foundObject)
+
+            return TweetIdsModel.deleteMany({})
+          }).then((deletedObject) => {
+            console.log(deletedObject)
+
+            var tweetIds = new TweetIdsModel()
+            tweetIds.tweetIds = recentTweetIds
+            return tweetIds.save()
+          }).then((savedObject) => {
+            console.log(savedObject)
+
+            clearInterval(setIntervalHandler)
+            resolve()
+          }).catch((err) => {
+            console.log(err)
+          })
         } else {
           l++
           params1 = {
@@ -230,50 +253,30 @@ function getLatestTweetId() {
 // the latest tweet id by calling 'getLatestTweetId'
 function checkForNewerTweet() {
   console.log('inside checkForNewerTweet')
-  return new Promise((resolve, reject) => {
-    if (firstTime && j < arrayOfIds.length) {
-      console.log('inside if')
 
-      paramWithoutSinceId = {
-        user_id: arrayOfIds[j],
+  return new Promise((resolve, reject) => {
+    console.log('since_id ==> ', recentTweetIds[m])
+
+    if (m < recentTweetIds.length) {
+      paramWithSinceId = {
+        user_id: arrayOfIds[m],
         count: 1,
         exclude_replies: true,
-        include_rts: false
+        include_rts: false,
+        since_id: recentTweetIds[m]
       }
-      return primary1(paramWithoutSinceId, j).then(() => {
-        j++
+      
+      return primary1(paramWithSinceId, m).then(() => {
+        if (++m === recentTweetIds.length) {
+          m = 0
+        }
         resolve()
       }).catch((err) => {
-        j++
+        if (++m === recentTweetIds.length) {
+          m = 0
+        }
         reject(err)
       })
-    } else {
-      j = 0
-      firstTime = false
-
-      console.log('inside else')
-      console.log('since_id ==> ', recentTweetIds[m])
-
-      if (m < recentTweetIds.length) {
-        paramWithSinceId = {
-          user_id: arrayOfIds[m],
-          count: 1,
-          exclude_replies: true,
-          include_rts: false,
-          since_id: recentTweetIds[m]
-        }
-        return primary1(paramWithSinceId, m).then(() => {
-          if (++m === recentTweetIds.length) {
-            m = 0
-          }
-          resolve()
-        }).catch((err) => {
-          if (++m === recentTweetIds.length) {
-            m = 0
-          }
-          reject(err)
-        })
-      }
     }
   })
 }
@@ -309,7 +312,7 @@ function primary1(params1, index) {
       console.log('index ==> ', index, '\n')
       console.log('primary1 ==> recentTweetIds ==> ', recentTweetIds)
       /* fs.appendFileSync(path.join(__dirname, 'since_ids_after_splice.json'), JSON.stringify(recentTweetIds))
- */
+       */
       //  checking if tweets have media
       /**
        * ERROR in case of no media
@@ -400,7 +403,7 @@ function primary1(params1, index) {
     }).catch((err) => {
       if (err.message === 'Cannot read property \'0\' of undefined') {
         return reject('Tweet does not contain any media')
-      } else if (err/* .message === 'Cannot read property \'id_str\' of undefined' */) {
+      } else if (err /* .message === 'Cannot read property \'id_str\' of undefined' */ ) {
         reject(err)
       }
     })
@@ -691,5 +694,3 @@ client.get('friends/list', params).then((response) => {
     if (err)
         console.log(err)
 }) */
-
-
