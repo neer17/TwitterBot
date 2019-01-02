@@ -2,16 +2,11 @@ var Twitter = require('twitter')
 var fs = require('fs')
 var axios = require('axios')
 var path = require('path')
-var mongoose = require('mongoose')
-var http = require('http')
 
 // var util = require('util')
 // var sharp = require('sharp')
 
-mongoose.connect(`mongodb://neer17:pontiac633725@ds231374.mlab.com:31374/twitter_bot_2018`)
-
 var keys = require('./config')
-var TweetIdsModel = require('./Schema/TweetIdSchema')
 
 var client = new Twitter(keys)
 
@@ -25,26 +20,16 @@ const VIDEO = 'video'
 
 console.log('bot started')
 
-//  declaring it to store comma seperated ids of all the users
-//  whom are being followed
-var friendsString = ''
-
-//
-// var mediaIds = []
 var arrayOfIds = []
 var newLatestTweetId = 1
 var splittedStatus
 var status
 var usersTweets
-var i = 0
-var j = 0
 var l = 0
 var m = 0
 var totalFollowing
 var params1
 var recentTweetIds = []
-var firstTime = true
-var paramWithoutSinceId
 var paramWithSinceId
 var mediaType
 
@@ -110,7 +95,7 @@ async function followPeople(id) {
 // video_params = {"itsnotgonewell"}
 
 var params = {
-  screen_name: 'memesonhistory,got_memes_,dankmemesgang,thememesbotdank,throneofmemes,knowyourmeme,thehoodmemes,animememedaily,brainmemes,gameplay,footballmemesco,soccermemes,trollfootball'
+  screen_name: 'memesonhistory,got_memes_,dankmemesgang,thememesbotdank,knowyourmeme,thehoodmemes,animememedaily,brainmemes,gameplay,footballmemesco'
 }
 
 /* var params = {
@@ -139,7 +124,6 @@ client
 
     for (let i = 0; i < response.length; i++) {
       arrayOfIds.push(response[i].id_str)
-      friendsString += response[i].id_str + ','
 
       //  following the users
       followPeople(arrayOfIds[i])
@@ -152,7 +136,7 @@ client
 
     //  calling 'checkForNewerTweet' when 'getLatestTweetId()' gets resolved
     getLatestTweetId()
-    /* .then(() => {
+    .then(() => {
           setTimeout(function func1() {
             checkForNewerTweet().then(() => {
               setTimeout(func1, 1000 * 10)
@@ -169,7 +153,7 @@ client
           }, 1000 * 10)
         }).catch((err) => {
           console.log(err)
-        }) */
+        })
   }).catch((err) => {
     console.log(err)
   })
@@ -206,25 +190,8 @@ function getLatestTweetId() {
           l = 0
           console.log(recentTweetIds)
 
-          //  finding existing tweet ids, deleting them and saving the latest ones
-          TweetIdsModel.find({}).then((foundObject) => {
-            console.log(foundObject)
-
-            return TweetIdsModel.deleteMany({})
-          }).then((deletedObject) => {
-            console.log(deletedObject)
-
-            var tweetIds = new TweetIdsModel()
-            tweetIds.tweetIds = recentTweetIds
-            return tweetIds.save()
-          }).then((savedObject) => {
-            console.log(savedObject)
-
-            clearInterval(setIntervalHandler)
-            resolve()
-          }).catch((err) => {
-            console.log(err)
-          })
+          clearInterval(setIntervalHandler)
+          resolve()
         } else {
           l++
           params1 = {
@@ -265,7 +232,7 @@ function checkForNewerTweet() {
         include_rts: false,
         since_id: recentTweetIds[m]
       }
-      
+
       return primary1(paramWithSinceId, m).then(() => {
         if (++m === recentTweetIds.length) {
           m = 0
