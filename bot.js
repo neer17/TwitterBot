@@ -13,7 +13,7 @@ var client = new Twitter(keys)
 /* //  promisifying 'setTimeout'
 const setTimeoutPromise = util.promisify(setTimeout) */
 
-global.memeCount = 0
+global.time = 10
 const GIF = 'animated_gif'
 const PHOTO = 'photo'
 const VIDEO = 'video'
@@ -93,9 +93,8 @@ async function followPeople(id) {
 //  then following the users
 
 // video_params = {"itsnotgonewell"}
-
 var params = {
-  screen_name: 'memesonhistory,got_memes_,dankmemesgang,thememesbotdank,knowyourmeme,thehoodmemes,animememedaily,brainmemes,gameplay,footballmemesco'
+  screen_name: 'fluff,9gag,neeraj_sewani'
 }
 
 /* var params = {
@@ -139,7 +138,7 @@ client
     .then(() => {
           setTimeout(function func1() {
             checkForNewerTweet().then(() => {
-              setTimeout(func1, 1000 * 10)
+              setTimeout(func1, 1000 * time)
             }).catch((err) => {
               if (err.message === 'Cannot read property \'id_str\' of undefined') {
                 console.log('Old Tweet')
@@ -148,7 +147,7 @@ client
               } else {
                 console.log(err)
               }
-              setTimeout(func1, 1000 * 10)
+              setTimeout(func1, 1000 * time)
             })
           }, 1000 * 10)
         }).catch((err) => {
@@ -291,6 +290,7 @@ function primary1(params1, index) {
         //  determining the type of media
         if (mediaType === PHOTO) {
           console.log('media type ==> PHOTO')
+          time = 10
 
           var mediaUrl = hasMedia.media_url
 
@@ -298,13 +298,21 @@ function primary1(params1, index) {
           //  for promise chaining
           return download(mediaUrl, PHOTO)
         } else if (mediaType === GIF) {
+          console.log('media type ==> GIF')
+
+          time = 60 * 2
+
           //  it would be video
-          var gifUrl = hasMedia.video_info.variants[1].url
+          var gifUrl = hasMedia.video_info.variants[0].url
 
           //  returning a promise
           return download(gifUrl, GIF)
         } else {
-          var videoUrl = hasMedia.video_info.variants[1].url
+          console.log('media type ==> VIDEO')
+
+          time = 60 * 2
+
+          var videoUrl = hasMedia.video_info.variants[0].url
 
           //  returning a promise
           return download(videoUrl, VIDEO)
@@ -319,7 +327,7 @@ function primary1(params1, index) {
       if (mediaType === GIF) {
         base64EncodedMedia = fs.readFileSync(
           path.join(__dirname, 'memes', 'meme0.mp4'), {
-            encoding: 'base64'
+            encoding: 'binary'
           }
         )
       } else if (mediaType === PHOTO) {
@@ -331,7 +339,7 @@ function primary1(params1, index) {
       } else {
         base64EncodedMedia = fs.readFileSync(
           path.join(__dirname, 'memes', 'meme0.mp4'), {
-            encoding: 'base64'
+            encoding: 'binary'
           }
         )
       }
