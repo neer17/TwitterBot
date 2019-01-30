@@ -1,14 +1,16 @@
-var Twitter = require('twitter')
-var fs = require('fs')
-var axios = require('axios')
-var path = require('path')
+const Twitter = require('twitter')
+const fs = require('fs')
+const axios = require('axios')
+const path = require('path')
 
 // var util = require('util')
 // var sharp = require('sharp')
 
-var keys = require('./config')
+const keys = require('./config')
+const {download} = require('./download')
+const {followPeople}  = require('./followPeople')
 
-var client = new Twitter(keys)
+const client = new Twitter(keys)
 
 /* //  promisifying 'setTimeout'
 const setTimeoutPromise = util.promisify(setTimeout) */
@@ -32,61 +34,6 @@ var params1
 var recentTweetIds = []
 var paramWithSinceId
 var mediaType
-
-/**
- * downloading the memes
- */
-
-async function download (url, type) {
-  var response = await axios({
-    method: 'get',
-    url,
-    responseType: 'stream'
-  })
-
-  var imagePath
-
-  //  determining the type of media
-  if (type === GIF || type === VIDEO) {
-    imagePath = path.join(__dirname, 'memes', `meme0.mp4`)
-  } else if (type === PHOTO) {
-    imagePath = path.join(__dirname, 'memes', `meme0.jpg`)
-  }
-
-  //  writing the media into the file
-  response.data.pipe(fs.createWriteStream(imagePath))
-
-  return new Promise((resolve, reject) => {
-    response.data.on('end', () => {
-      resolve()
-    })
-
-    response.data.on('error', err => {
-      reject(err)
-    })
-  })
-}
-
-//  following people based on their id
-async function followPeople (id) {
-  try {
-    var response = await client.post('friendships/create', {
-      user_id: id
-    })
-
-    console.log('==> ', response.screen_name, '<== is followed')
-
-    return new Promise((resolve, reject) => {
-      resolve()
-    })
-  } catch (err) {
-    console.log('==> ', response.screen_name, '<== is already being followed')
-
-    return new Promise((resolve, reject) => {
-      reject(err)
-    })
-  }
-}
 
 //  getting the ids by screen_name
 //  then following the users
