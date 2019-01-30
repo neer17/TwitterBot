@@ -37,7 +37,7 @@ var mediaType
  * downloading the memes
  */
 
-async function download(url, type) {
+async function download (url, type) {
   var response = await axios({
     method: 'get',
     url,
@@ -68,7 +68,7 @@ async function download(url, type) {
 }
 
 //  following people based on their id
-async function followPeople(id) {
+async function followPeople (id) {
   try {
     var response = await client.post('friendships/create', {
       user_id: id
@@ -79,7 +79,6 @@ async function followPeople(id) {
     return new Promise((resolve, reject) => {
       resolve()
     })
-
   } catch (err) {
     console.log('==> ', response.screen_name, '<== is already being followed')
 
@@ -135,24 +134,24 @@ client
 
     //  calling 'checkForNewerTweet' when 'getLatestTweetId()' gets resolved
     getLatestTweetId()
-    .then(() => {
-          setTimeout(function func1() {
-            checkForNewerTweet().then(() => {
-              setTimeout(func1, 1000 * time)
-            }).catch((err) => {
-              if (err.message === 'Cannot read property \'id_str\' of undefined') {
-                console.log('Old Tweet')
-              } else if (err.message === 'Cannot read property \'media\' of undefined') {
-                console.log('Tweet with no media')
-              } else {
-                console.log(err)
-              }
-              setTimeout(func1, 1000 * time)
-            })
-          }, 1000 * 10)
-        }).catch((err) => {
-          console.log(err)
-        })
+      .then(() => {
+        setTimeout(function func1 () {
+          checkForNewerTweet().then(() => {
+            setTimeout(func1, 1000 * time)
+          }).catch((err) => {
+            if (err.message === 'Cannot read property \'id_str\' of undefined') {
+              console.log('Old Tweet')
+            } else if (err.message === 'Cannot read property \'media\' of undefined') {
+              console.log('Tweet with no media')
+            } else {
+              console.log(err)
+            }
+            setTimeout(func1, 1000 * time)
+          })
+        }, 1000 * 10)
+      }).catch((err) => {
+        console.log(err)
+      })
   }).catch((err) => {
     console.log(err)
   })
@@ -162,7 +161,7 @@ client
  */
 
 //  gretting an 'recentTweetIds' array of latest tweet ids of all the followed users
-function getLatestTweetId() {
+function getLatestTweetId () {
   console.log('inside getLatestTweetId')
   //  for the first time not including the 'since_id'
   //  after getting the 'newLatestTweetId' from the first tweet
@@ -175,7 +174,7 @@ function getLatestTweetId() {
   }
 
   return new Promise((resolve, reject) => {
-    var setIntervalHandler = setInterval(() => {
+    let setIntervalHandler = setInterval(() => {
       // console.log('inside setInterval')
       return client.get('statuses/user_timeline', params1).then((response) => {
         /* fs.writeFileSync(path.join(__dirname, 'response.json'), JSON.stringify(response))
@@ -217,7 +216,7 @@ function getLatestTweetId() {
 
 // this function would check for any newer tweet by the user after getting
 // the latest tweet id by calling 'getLatestTweetId'
-function checkForNewerTweet() {
+function checkForNewerTweet () {
   console.log('inside checkForNewerTweet')
 
   return new Promise((resolve, reject) => {
@@ -251,7 +250,7 @@ function checkForNewerTweet() {
  * END checkForNewerTweet
  */
 
-function primary1(params1, index) {
+function primary1 (params1, index) {
   return new Promise((resolve, reject) => {
     //  following would return tweets in chronological order
     client.get('statuses/user_timeline', params1).then((tweets) => {
@@ -326,7 +325,7 @@ function primary1(params1, index) {
 
       if (mediaType === GIF) {
         base64EncodedMedia = fs.readFileSync(
-          path.join(__dirname, 'memes', 'meme0.mp4'), {
+          path.join(__dirname, 'memes', 'meme0.gif'), {
             encoding: 'binary'
           }
         )
@@ -378,7 +377,7 @@ function primary1(params1, index) {
     }).catch((err) => {
       if (err.message === 'Cannot read property \'0\' of undefined') {
         return reject('Tweet does not contain any media')
-      } else if (err /* .message === 'Cannot read property \'id_str\' of undefined' */ ) {
+      } else if (err /* .message === 'Cannot read property \'id_str\' of undefined' */) {
         reject(err)
       }
     })
