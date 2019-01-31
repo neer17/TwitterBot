@@ -16,7 +16,7 @@ exports.download = async function (url, type) {
 
     //  determining the type of media and getting their path
     if (type === GIF){
-        mediaPath = path.join(__dirname, 'memes', `meme0.gif`)
+        mediaPath = path.join(__dirname, 'memes', `meme0.mp4`)
     } else if (type === VIDEO) {
         mediaPath = path.join(__dirname, 'memes', `meme0.mp4`)
     } else if (type === PHOTO) {

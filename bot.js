@@ -272,7 +272,7 @@ function primary1 (params1, index) {
 
       if (mediaType === GIF) {
         base64EncodedMedia = fs.readFileSync(
-          path.join(__dirname, 'memes', 'meme0.gif'), {
+          path.join(__dirname, 'memes', 'meme0.mp4'), {
             encoding: 'binary'
           }
         )
