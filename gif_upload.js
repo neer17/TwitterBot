@@ -1,14 +1,25 @@
 const Twitter = require('twitter')
 const path = require('path')
+const fs = require('fs')
+const gifify = require('gifify')
 
 const config = require('./config')
-
 const client = new Twitter(config)
 
-const pathToMovie = path.join(__dirname, 'memes', 'meme0.mp4')
+const oldPath = path.join(__dirname, 'memes', 'meme0.mp4')
 const mediaType = 'video/mp4'; // `'video/mp4'` is also supported
-const mediaData = require('fs').readFileSync(pathToMovie);
-const mediaSize = require('fs').statSync(pathToMovie).size
+const mediaData = require('fs').readFileSync(oldPath);
+const mediaSize = require('fs').statSync(oldPath).size;
+
+const newPath = path.join(__dirname, 'memes', 'newGif.gif')
+const gif = fs.createWriteStream(newPath);
+
+const options = {
+    resize: '200:-1',
+    from: 30,
+    to: 35
+}
+gifify(oldPath, options).pipe(gif)
 
 initUpload() // Declare that you wish to upload some media
     .then(appendUpload) // Send the data for the media
@@ -17,16 +28,14 @@ initUpload() // Declare that you wish to upload some media
         // You now have an uploaded movie/animated gif
         // that you can reference in Tweets, e.g. `update/statuses`
         // will take a `mediaIds` param.
-
-        client.post('statuses/upload', {
-            status: 'status1',
-            media_id: mediaId
-        }).then((result) => {
-            console.log(`gif uploaded successfully`)
-        }).catch((err) => {
-            console.log(err)
-        })/**/
-    }).catch((err) => {
+        return client
+            .post('statuses/update', {
+                status: 'status 2',
+                media_ids: mediaId
+            })
+    }).then((result) => {
+        console.log(result)
+}).catch((err) => {
     console.log(err)
 })
 
