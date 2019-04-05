@@ -306,7 +306,12 @@ function primary1 (params1, index) {
 
       //  getting the status and removing the url part of it
       splittedStatus = usersTweets[0].text.split('https')
-      status = splittedStatus[0]
+
+      /**
+       * appending tags with the status #memes #memesdaily #dankmemes
+       * @type {string}
+       */
+      status = splittedStatus[0] + '  #memes  #memesdaily  #dankmemes'
 
       //  tweeting the media
       //  returning a promise
