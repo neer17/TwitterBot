@@ -39,13 +39,13 @@ var mediaType
 //  then following the users
 
 // video_params = {"itsnotgonewell"}
-var params = {
+/*var params = {
   screen_name: 'fluff,9gag,neeraj_sewani'
-}
+}*/
 
-/* var params = {
+ var params = {
   screen_name: 'memesonhistory,got_memes_,throneofmemes,dankmemesgang,footballmemesco'
-} */
+}
 
 /* var params = {
   screen_name: 'gameplay,historytolearn,itsharrypotter'
