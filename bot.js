@@ -44,7 +44,7 @@ var mediaType
 }*/
 
  var params = {
-  screen_name: 'memesonhistory,got_memes_,throneofmemes,dankmemesgang,footballmemesco'
+  screen_name: 'memesonhistory,got_memes_,throneofmemes,dankmemesgang,footballmemesco,thememesbotdank,knowyourmeme,sequelmemes,prequelmemesbot,equelmemes,spongebobmemesz,thememesbot,memebroker,brainmemes'
 }
 
 /* var params = {
