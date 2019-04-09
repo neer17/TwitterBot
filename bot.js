@@ -311,7 +311,7 @@ function primary1 (params1, index) {
        * appending tags with the status #memes #memesdaily #dankmemes
        * @type {string}
        */
-      status = splittedStatus[0] + '  #MEMES  #memesdaily  #dankmemes  #funny'
+      status = splittedStatus[0] + '  #MEMES  #memesdaily  #dankmemes'
 
       //  tweeting the media
       //  returning a promise
