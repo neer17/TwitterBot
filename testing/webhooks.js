@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 
 const userActivityWebhook = twitterWebhooks.userActivity({
     serverUrl: 'https://twitter-bot-2018.herokuapp.com/',
-    route: '/your/webhook/route', //default : '/'
+    route: '/webhook', //default : '/'
     consumerKey: 'OiQqT1gANZhYy7GjPR2xoW6gs',
     consumerSecret: 'LyG5goTBGxyuDlgq73G1CC5YTdBf95iqwVFVx7LYLtBN7Zo0Sy',
     accessToken: '1017764619337646080-LM0G9WqWxI7zoAnqUd4nWhV53EKU48',
@@ -22,9 +22,9 @@ userActivityWebhook.register();
 
 //Subscribe for a particular user activity
 userActivityWebhook.subscribe({
-    userId: '[TWITTER USER ID]',
-    accessToken: '[TWITTER USER ACCESS TOKEN]',
-    accessTokenSecret: '[TWITTER USER ACCESS TOKEN SECRET]'
+    userId: '1017764619337646080',
+    accessToken: '1017764619337646080-LM0G9WqWxI7zoAnqUd4nWhV53EKU48',
+    accessTokenSecret: 'hBLXanm089wDi10Y4wyCB12No3HdxhE74LW15kepCvTVL'
 })
     .then(function (userActivity) {
         userActivity
