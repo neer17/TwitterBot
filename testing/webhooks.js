@@ -6,6 +6,8 @@ const https = require ('https');
 const app = express();
 app.use(bodyParser.json());
 
+const PORT = process.env.PORT
+
 const userActivityWebhook = twitterWebhooks.userActivity({
     serverUrl: 'https://twitter-bot-2018.herokuapp.com/',
     route: '/webhook', //default : '/'
@@ -49,4 +51,4 @@ const server = https.createServer(options, (req, res) => {
     res.writeHead(200);
 })
 
-server.listen(443);
+server.listen(PORT);
