@@ -5,7 +5,7 @@
 const Twitter = require('twitter')
 const path = require('path')
 const fs = require('fs')
-const keys = require('./config')
+const keys = require('./config/config')
 
 const client = new Twitter(keys)
 

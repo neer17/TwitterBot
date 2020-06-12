@@ -1,8 +1,8 @@
 const Twitter = require('twitter')
 
-const config = require('./config')
+const {twitter} = require('./config/config')
 
-const client = new Twitter(config)
+const client = new Twitter(twitter)
 
 exports.followPeople = async function (id) {
     try {

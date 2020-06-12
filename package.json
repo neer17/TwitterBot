@@ -6,8 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node bot.js",
-    "start_test": "node account-activity.js",
-    "start_webhooks": "testing/webhooks.js"
+    "webhooks": "node webhooks/register.js"
   },
   "author": "",
   "license": "ISC",

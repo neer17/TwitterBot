@@ -8,14 +8,11 @@ const path = require("path")
 // var util = require('util')
 // var sharp = require('sharp')
 
-const config = require('./config')
+const {twitter} = require('./config/config')
 const { download } = require("./download")
 const { followPeople } = require("./followPeople")
 
-console.info({
-  ...config
-})
-const client = new Twitter({...config})
+const client = new Twitter({...twitter})
 
 /* //  promisifying 'setTimeout'
 const setTimeoutPromise = util.promisify(setTimeout) */
