@@ -1,26 +1,31 @@
-const Twitter = require('twitter')
-const fs = require('fs')
-const axios = require('axios')
-const path = require('path')
+require('dotenv').config()
+
+const Twitter = require("twitter")
+const fs = require("fs")
+const axios = require("axios")
+const path = require("path")
 
 // var util = require('util')
 // var sharp = require('sharp')
 
-const keys = require('./config')
-const {download} = require('./download')
-const {followPeople}  = require('./followPeople')
+const config = require('./config')
+const { download } = require("./download")
+const { followPeople } = require("./followPeople")
 
-const client = new Twitter(keys)
+console.info({
+  ...config
+})
+const client = new Twitter({...config})
 
 /* //  promisifying 'setTimeout'
 const setTimeoutPromise = util.promisify(setTimeout) */
 
 global.time = 10
-const GIF = 'animated_gif'
-const PHOTO = 'photo'
-const VIDEO = 'video'
+const GIF = "animated_gif"
+const PHOTO = "photo"
+const VIDEO = "video"
 
-console.log('bot started')
+console.log("bot started")
 
 var arrayOfIds = []
 var newLatestTweetId = 1
@@ -43,8 +48,9 @@ var mediaType
   screen_name: 'fluff,9gag,neeraj_sewani'
 }*/
 
- var params = {
-  screen_name: 'memesonhistory,got_memes_,throneofmemes,dankmemesgang,footballmemesco,thememesbotdank,knowyourmeme,sequelmemes,prequelmemesbot,equelmemes,spongebobmemesz,thememesbot,memebroker,brainmemes'
+var params = {
+  screen_name:
+    "memesonhistory,got_memes_,throneofmemes,dankmemesgang,footballmemesco,thememesbotdank,knowyourmeme,sequelmemes,prequelmemesbot,equelmemes,spongebobmemesz,thememesbot,memebroker,brainmemes",
 }
 
 /* var params = {
@@ -60,8 +66,8 @@ var mediaType
 } */
 
 client
-  .get('users/lookup', params)
-  .then(response => {
+  .get("users/lookup", params)
+  .then((response) => {
     //  creating a comma seperated list of ids of the people to follow
     //  and storing it in 'friendsString'
     //  and then following them
@@ -76,30 +82,38 @@ client
 
     totalFollowing = arrayOfIds.length
 
-    console.log('total following ==> ', totalFollowing)
+    console.log("total following ==> ", totalFollowing)
     console.log(arrayOfIds)
 
     //  calling 'checkForNewerTweet' when 'getLatestTweetId()' gets resolved
     getLatestTweetId()
       .then(() => {
-        setTimeout(function func1 () {
-          checkForNewerTweet().then(() => {
-            setTimeout(func1, 1000 * time)
-          }).catch((err) => {
-            if (err.message === 'Cannot read property \'id_str\' of undefined') {
-              console.log('Old Tweet')
-            } else if (err.message === 'Cannot read property \'media\' of undefined') {
-              console.log('Tweet with no media')
-            } else {
-              console.log(err)
-            }
-            setTimeout(func1, 1000 * time)
-          })
+        setTimeout(function func1() {
+          checkForNewerTweet()
+            .then(() => {
+              setTimeout(func1, 1000 * time)
+            })
+            .catch((err) => {
+              if (
+                err.message === "Cannot read property 'id_str' of undefined"
+              ) {
+                console.log("Old Tweet")
+              } else if (
+                err.message === "Cannot read property 'media' of undefined"
+              ) {
+                console.log("Tweet with no media")
+              } else {
+                console.log(err)
+              }
+              setTimeout(func1, 1000 * time)
+            })
         }, 1000 * 10)
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(err)
       })
-  }).catch((err) => {
+  })
+  .catch((err) => {
     console.log(err)
   })
 
@@ -108,8 +122,8 @@ client
  */
 
 //  gretting an 'recentTweetIds' array of latest tweet ids of all the followed users
-function getLatestTweetId () {
-  console.log('inside getLatestTweetId')
+function getLatestTweetId() {
+  console.log("inside getLatestTweetId")
   //  for the first time not including the 'since_id'
   //  after getting the 'newLatestTweetId' from the first tweet
   //  updating the 'params'
@@ -117,42 +131,46 @@ function getLatestTweetId () {
     user_id: arrayOfIds[l],
     count: 1,
     exclude_replies: true,
-    include_rts: false
+    include_rts: false,
   }
 
   return new Promise((resolve, reject) => {
     let setIntervalHandler = setInterval(() => {
       // console.log('inside setInterval')
-      return client.get('statuses/user_timeline', params1).then((response) => {
-        /* fs.writeFileSync(path.join(__dirname, 'response.json'), JSON.stringify(response))
+      return client
+        .get("statuses/user_timeline", params1)
+        .then((response) => {
+          console.info(`statuses/suer_timeline response ==>`, response)
+          /* fs.writeFileSync(path.join(__dirname, 'response.json'), JSON.stringify(response))
         console.log('written into the file') */
 
-        //  storing the 'id_str' of the recent tweet of followings
-        recentTweetIds.push(response[0].id_str)
+          //  storing the 'id_str' of the recent tweet of followings
+          recentTweetIds.push(response[0].id_str)
 
-        //  when all the ids in 'arrayOfIds' are traversed then returning a promise
-        if (l === arrayOfIds.length - 1) {
-          l = 0
-          console.log(recentTweetIds)
+          //  when all the ids in 'arrayOfIds' are traversed then returning a promise
+          if (l === arrayOfIds.length - 1) {
+            l = 0
+            console.log(recentTweetIds)
 
-          clearInterval(setIntervalHandler)
-          resolve()
-        } else {
-          l++
-          params1 = {
-            user_id: arrayOfIds[l],
-            count: 1,
-            exclude_replies: true,
-            include_rts: false
+            clearInterval(setIntervalHandler)
+            resolve()
+          } else {
+            l++
+            params1 = {
+              user_id: arrayOfIds[l],
+              count: 1,
+              exclude_replies: true,
+              include_rts: false,
+            }
           }
-        }
-      }).catch((err) => {
-        if (++l === arrayOfIds.length - 1) {
-          l = 0
-          clearInterval(setIntervalHandler)
-        }
-        reject(err)
-      })
+        })
+        .catch((err) => {
+          if (++l === arrayOfIds.length - 1) {
+            l = 0
+            clearInterval(setIntervalHandler)
+          }
+          reject(err)
+        })
     }, 1000 * 2)
   })
 }
@@ -163,11 +181,11 @@ function getLatestTweetId () {
 
 // this function would check for any newer tweet by the user after getting
 // the latest tweet id by calling 'getLatestTweetId'
-function checkForNewerTweet () {
-  console.log('inside checkForNewerTweet')
+function checkForNewerTweet() {
+  console.log("inside checkForNewerTweet")
 
   return new Promise((resolve, reject) => {
-    console.log('since_id ==> ', recentTweetIds[m])
+    console.log("since_id ==> ", recentTweetIds[m])
 
     if (m < recentTweetIds.length) {
       paramWithSinceId = {
@@ -175,20 +193,22 @@ function checkForNewerTweet () {
         count: 1,
         exclude_replies: true,
         include_rts: false,
-        since_id: recentTweetIds[m]
+        since_id: recentTweetIds[m],
       }
 
-      return primary1(paramWithSinceId, m).then(() => {
-        if (++m === recentTweetIds.length) {
-          m = 0
-        }
-        resolve()
-      }).catch((err) => {
-        if (++m === recentTweetIds.length) {
-          m = 0
-        }
-        reject(err)
-      })
+      return primary1(paramWithSinceId, m)
+        .then(() => {
+          if (++m === recentTweetIds.length) {
+            m = 0
+          }
+          resolve()
+        })
+        .catch((err) => {
+          if (++m === recentTweetIds.length) {
+            m = 0
+          }
+          reject(err)
+        })
     }
   })
 }
@@ -197,142 +217,151 @@ function checkForNewerTweet () {
  * END checkForNewerTweet
  */
 
-function primary1 (params1, index) {
+function primary1(params1, index) {
   return new Promise((resolve, reject) => {
     //  following would return tweets in chronological order
-    client.get('statuses/user_timeline', params1).then((tweets) => {
-      console.log('step 1 \t getting tweets of a user')
+    client
+      .get("statuses/user_timeline", params1)
+      .then((tweets) => {
+        console.log("step 1 \t getting tweets of a user")
 
-      //  storing the value of tweets for step 3
-      usersTweets = tweets
+        //  storing the value of tweets for step 3
+        usersTweets = tweets
 
-      /* fs.writeFileSync(path.join(__dirname, 'tweets.json'), JSON.stringify(tweets))
+        /* fs.writeFileSync(path.join(__dirname, 'tweets.json'), JSON.stringify(tweets))
       console.log('written into the file') */
 
-      /**
-       * ERROR prone
-       */
-      //  getting the tweet id
-      //  in case 'newLatestTweetId' is the latest then it would get redirected to the
-      //  catch block
-      newLatestTweetId = tweets[0].id_str
-      /* fs.appendFileSync(path.join(__dirname, 'since_ids.json'), JSON.stringify(newLatestTweetId)) */
+        /**
+         * ERROR prone
+         */
+        //  getting the tweet id
+        //  in case 'newLatestTweetId' is the latest then it would get redirected to the
+        //  catch block
+        newLatestTweetId = tweets[0].id_str
+        /* fs.appendFileSync(path.join(__dirname, 'since_ids.json'), JSON.stringify(newLatestTweetId)) */
 
-      //  if there is any new tweet then updating the tweet id
-      //  of old tweet with the new tweet id
-      recentTweetIds.splice(index, 1, newLatestTweetId)
-      console.log('index ==> ', index, '\n')
-      console.log('primary1 ==> recentTweetIds ==> ', recentTweetIds)
-      /* fs.appendFileSync(path.join(__dirname, 'since_ids_after_splice.json'), JSON.stringify(recentTweetIds))
-       */
-      //  checking if tweets have media
-      /**
-       * ERROR in case of no media
-       */
-      var hasMedia = tweets[0].extended_entities.media[0]
-      if (hasMedia) {
-        mediaType = hasMedia.type
+        //  if there is any new tweet then updating the tweet id
+        //  of old tweet with the new tweet id
+        recentTweetIds.splice(index, 1, newLatestTweetId)
+        console.log("index ==> ", index, "\n")
+        console.log("primary1 ==> recentTweetIds ==> ", recentTweetIds)
+        /* fs.appendFileSync(path.join(__dirname, 'since_ids_after_splice.json'), JSON.stringify(recentTweetIds))
+         */
+        //  checking if tweets have media
+        /**
+         * ERROR in case of no media
+         */
+        var hasMedia = tweets[0].extended_entities.media[0]
+        if (hasMedia) {
+          mediaType = hasMedia.type
 
-        //  determining the type of media
-        if (mediaType === PHOTO) {
-          console.log('media type ==> PHOTO')
-          time = 10
+          //  determining the type of media
+          if (mediaType === PHOTO) {
+            console.log("media type ==> PHOTO")
+            time = 10
 
-          var mediaUrl = hasMedia.media_url
+            var mediaUrl = hasMedia.media_url
 
-          //  returning a promise returned by download method
-          //  for promise chaining
-          return download(mediaUrl, PHOTO)
-        } else if (mediaType === GIF) {
-          console.log('media type ==> GIF')
+            //  returning a promise returned by download method
+            //  for promise chaining
+            return download(mediaUrl, PHOTO)
+          } else if (mediaType === GIF) {
+            console.log("media type ==> GIF")
 
-          time = 60 * 2
+            time = 60 * 2
 
-          //  it would be video
-          var gifUrl = hasMedia.video_info.variants[0].url
+            //  it would be video
+            var gifUrl = hasMedia.video_info.variants[0].url
 
-          //  returning a promise
-          return download(gifUrl, GIF)
-        } else {
-          console.log('media type ==> VIDEO')
+            //  returning a promise
+            return download(gifUrl, GIF)
+          } else {
+            console.log("media type ==> VIDEO")
 
-          time = 60 * 2
+            time = 60 * 2
 
-          var videoUrl = hasMedia.video_info.variants[0].url
+            var videoUrl = hasMedia.video_info.variants[0].url
 
-          //  returning a promise
-          return download(videoUrl, VIDEO)
+            //  returning a promise
+            return download(videoUrl, VIDEO)
+          }
         }
-      }
-    }).then((response) => {
-      console.log('step 2')
-      console.log('media downloaded successfully')
+      })
+      .then((response) => {
+        console.log("step 2")
+        console.log("media downloaded successfully")
 
-      var base64EncodedMedia
+        var base64EncodedMedia
 
-      if (mediaType === GIF) {
-        base64EncodedMedia = fs.readFileSync(
-          path.join(__dirname, 'memes', 'meme0.mp4'), {
-            encoding: 'binary'
-          }
-        )
-      } else if (mediaType === PHOTO) {
-        base64EncodedMedia = fs.readFileSync(
-          path.join(__dirname, 'memes', 'meme0.jpg'), {
-            encoding: 'base64'
-          }
-        )
-      } else {
-        base64EncodedMedia = fs.readFileSync(
-          path.join(__dirname, 'memes', 'meme0.mp4'), {
-            encoding: 'binary'
-          }
-        )
-      }
-      //  uploading the media and then tweeting it using 'media_id'
-      //  returning the promise
-      return client
-        .post('media/upload', {
-          media_data: base64EncodedMedia
+        if (mediaType === GIF) {
+          base64EncodedMedia = fs.readFileSync(
+            path.join(__dirname, "memes", "meme0.mp4"),
+            {
+              encoding: "binary",
+            }
+          )
+        } else if (mediaType === PHOTO) {
+          base64EncodedMedia = fs.readFileSync(
+            path.join(__dirname, "memes", "meme0.jpg"),
+            {
+              encoding: "base64",
+            }
+          )
+        } else {
+          base64EncodedMedia = fs.readFileSync(
+            path.join(__dirname, "memes", "meme0.mp4"),
+            {
+              encoding: "binary",
+            }
+          )
+        }
+        //  uploading the media and then tweeting it using 'media_id'
+        //  returning the promise
+        return client.post("media/upload", {
+          media_data: base64EncodedMedia,
         })
-    }).then((response) => {
-      console.log('step 3 \t uploading media')
+      })
+      .then((response) => {
+        console.log("step 3 \t uploading media")
 
-      var mediaId = response.media_id_string
+        var mediaId = response.media_id_string
 
-      /* fs.writeFileSync(path.join(__dirname, 'uploadedMediaData.json'), JSON.stringify(response)) */
+        /* fs.writeFileSync(path.join(__dirname, 'uploadedMediaData.json'), JSON.stringify(response)) */
 
-      console.log('written into uploadedMediaData')
+        console.log("written into uploadedMediaData")
 
-      //  getting the status and removing the url part of it
-      splittedStatus = usersTweets[0].text.split('https')
+        //  getting the status and removing the url part of it
+        splittedStatus = usersTweets[0].text.split("https")
 
-      /**
-       * appending tags with the status #memes #memesdaily #dankmemes
-       * @type {string}
-       */
-      status = splittedStatus[0] + '  #MEMES  #memesdaily  #dankmemes'
+        /**
+         * appending tags with the status #memes #memesdaily #dankmemes
+         * @type {string}
+         */
+        status = splittedStatus[0] + "  #MEMES  #memesdaily  #dankmemes"
 
-      //  tweeting the media
-      //  returning a promise
-      return client
-        .post('statuses/update', {
+        //  tweeting the media
+        //  returning a promise
+        return client.post("statuses/update", {
           status,
-          media_ids: mediaId
+          media_ids: mediaId,
         })
-    }).then((response) => {
-      console.log('step 4 \t tweeting')
-      if (response) {
-        console.log('Tweeted successfully')
-        resolve()
-      }
-    }).catch((err) => {
-      if (err.message === 'Cannot read property \'0\' of undefined') {
-        return reject('Tweet does not contain any media')
-      } else if (err /* .message === 'Cannot read property \'id_str\' of undefined' */) {
-        reject(err)
-      }
-    })
+      })
+      .then((response) => {
+        console.log("step 4 \t tweeting")
+        if (response) {
+          console.log("Tweeted successfully")
+          resolve()
+        }
+      })
+      .catch((err) => {
+        if (err.message === "Cannot read property '0' of undefined") {
+          return reject("Tweet does not contain any media")
+        } else if (
+          err /* .message === 'Cannot read property \'id_str\' of undefined' */
+        ) {
+          reject(err)
+        }
+      })
   })
 }
 

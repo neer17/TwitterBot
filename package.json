@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node bot.js",
+    "start_test": "node account-activity.js",
     "start_webhooks": "testing/webhooks.js"
   },
   "author": "",
@@ -13,9 +14,12 @@
   "dependencies": {
     "axios": "^0.18.0",
     "cloudconvert": "^1.1.2",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
     "node": "^11.4.0",
     "replace-ext": "^1.0.0",
-    "twitter": "^1.7.1"
+    "twitter": "^1.7.1",
+    "twitter-webhooks": "^0.3.3"
   },
   "engines": {
     "node": "8.11.1"
